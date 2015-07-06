@@ -1,7 +1,17 @@
+<!-- multilang from README.md
+
+
+
+
+NO MODIFIQUE ESTE ARCHIVO. FUE GENERADO AUTOMÁTICAMENTE POR multilang.js
+
+
+
+
+-->
 # exec-to-html
 Execute command sending output through stream to client
 
-<!--multilang v0 en:README.md es:LEEME.md -->
 
 ![designing](https://img.shields.io/badge/stability-desgining-red.svg)
 [![version](https://img.shields.io/npm/v/exec-to-html.svg)](https://npmjs.org/package/exec-to-html)
@@ -13,22 +23,15 @@ Execute command sending output through stream to client
 
 <!--multilang buttons-->
 
-language: ![English](https://raw.githubusercontent.com/codenautas/multilang/master/img/lang-en.png)
-also available in:
-[![Spanish](https://raw.githubusercontent.com/codenautas/multilang/master/img/lang-es.png)](LEEME.md)
+idioma: ![castellano](https://raw.githubusercontent.com/codenautas/multilang/master/img/lang-es.png)
+también disponible en:
+[![inglés](https://raw.githubusercontent.com/codenautas/multilang/master/img/lang-en.png)](README.md)
 
-<!--lang:es--]
 
 Ejecuta comandos en el servidor enviando la salida en un *Stream* hacia el navegador.
 
-[!--lang:en-->
-
-## License
-
-<!--lang:es--]
 
 ## Licencias
 
-[!--lang:es-->
 
 [MIT](LICENSE)
