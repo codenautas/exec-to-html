@@ -9,15 +9,14 @@
     "name": "Emilio Platzer", "email": "emilioplatzer@gmail.com"
   }],
   "dependencies": {
+    "best-promise": ">=0.2.2"
   },
   "devDependencies": {
-    "istanbul": "~0.3.6",
-    "mocha": "~2.1.0"
+    "istanbul": "~0.3.17",
+    "mocha": "~2.2.5",
+    "expect.js": ">=0.3.1"
   },
-  "files": [
-    "LICENSE",
-    "index.js"
-  ],
+  "main": "exec-to-html.js",
   "engines": {
     "node": ">= 0.10.0"
   },
