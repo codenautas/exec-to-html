@@ -7,6 +7,7 @@ var execToHtml = require('..');
 
 var stream = require('stream');
 var util = require('util');
+var os = require('os');
 
 /*
 function StringStream(){
@@ -26,13 +27,31 @@ describe('exec-to-html', function(){
     describe('internal streams', function(){
         it('first simple test', function(done){
             var lineCount=0;
-            execToHtml.run('echo hi5',{echo:false}).onLine(function(lineInfo){
+            execToHtml.run('!echo hi5',{echo:false}).onLine(function(lineInfo){
                 if(lineCount) done(new Error('many lines in first test'));
                 lineCount++;
-                expect(lineInfo.text).to.be('hi5\r\n');
+                expect(lineInfo.text).to.be('hi5'+os.EOL);
                 expect(lineInfo.origin).to.be('stdout');
             }).then(function(exitCode){
                 expect(exitCode).to.be(0);
+                console.log('lineCount',lineCount);
+                expect(lineCount).to.be(1);
+                done();
+            }).catch(done);
+        });
+        it('list of commands', function(done){
+            var expectedLines=[
+                {origin:'shell', text:'echo hi5'},
+                {origin:'stdout', text:'hi5'+os.EOL},
+                {origin:'shell', text:'echo two'},
+                {origin:'stdout', text:'two'+os.EOL}
+            ];
+            execToHtml.run(['!echo hi5','!echo two']).onLine(function(lineInfo){
+                if(!expectedLines.length) done(new Error('many lines in first test'));
+                expect(lineInfo).to.eql(expectedLines.shift());
+            }).then(function(exitCode){
+                expect(exitCode).to.be(0);
+                expect(expectedLines.length).to.be(0);
                 done();
             }).catch(done);
         });
