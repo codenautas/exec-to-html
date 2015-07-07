@@ -34,7 +34,6 @@ describe('exec-to-html', function(){
                 expect(lineInfo.origin).to.be('stdout');
             }).then(function(exitCode){
                 expect(exitCode).to.be(0);
-                console.log('lineCount',lineCount);
                 expect(lineCount).to.be(1);
                 done();
             }).catch(done);
@@ -44,9 +43,11 @@ describe('exec-to-html', function(){
                 {origin:'shell', text:'echo hi5'},
                 {origin:'stdout', text:'hi5'+os.EOL},
                 {origin:'shell', text:'echo two'},
-                {origin:'stdout', text:'two'+os.EOL}
+                {origin:'stdout', text:'two'+os.EOL},
+                {origin:'shell', text:'echo last'},
+                {origin:'stdout', text:'last'+os.EOL}
             ];
-            execToHtml.run(['!echo hi5','!echo two']).onLine(function(lineInfo){
+            execToHtml.run(['!echo hi5','!echo two','!echo last']).onLine(function(lineInfo){
                 if(!expectedLines.length) done(new Error('many lines in first test'));
                 expect(lineInfo).to.eql(expectedLines.shift());
             }).then(function(exitCode){
