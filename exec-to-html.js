@@ -10,10 +10,6 @@ var spawn = require("child_process").spawn;
 
 var os = require('os');
 
-console.log('os.type',os.type());
-console.log('os.hostname()',os.hostname());
-console.log('process.env',process.env);
-
 execToHtml.run = function run(commandLines, opts){
     if(!opts){
         opts={};
@@ -36,7 +32,11 @@ execToHtml.run = function run(commandLines, opts){
                         origin:'shell',
                         text:commandLine.substr(1)
                     };
-                    commandLine='cmd.exe /c '+commandLine.substr(1);
+                    if(os.EOL==='\\'){
+                        commandLine='cmd.exe /c '+commandLine.substr(1);
+                    }else{
+                        commandLine=process.env.SHELL+' '+commandLine.substr(1);
+                    }
                 }else{
                     lineForEmit={
                         origin:'command',
