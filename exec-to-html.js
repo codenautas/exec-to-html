@@ -8,6 +8,12 @@ var util = require('util');
 var Promises = require('best-promise');
 var spawn = require("child_process").spawn;
 
+var os = require('os');
+
+console.log('os.type',os.type());
+console.log('os.hostname()',os.hostname());
+console.log('process.env',process.env);
+
 execToHtml.run = function run(commandLines, opts){
     if(!opts){
         opts={};
