@@ -8,7 +8,7 @@ var util = require('util');
 var Promises = require('best-promise');
 var spawn = require("child_process").spawn;
 
-var os = require('os');
+var path = require('path');
 
 execToHtml.run = function run(commandLines, opts){
     if(!opts){
@@ -32,10 +32,11 @@ execToHtml.run = function run(commandLines, opts){
                         origin:'shell',
                         text:commandLine.substr(1)
                     };
-                    if(os.EOL==='\\'){
+                    if(path.sep==='\\'){
                         commandLine='cmd.exe /c '+commandLine.substr(1);
                     }else{
                         commandLine=process.env.SHELL+' '+commandLine.substr(1);
+                        console.log('commandLine',commandLine);
                     }
                 }else{
                     lineForEmit={
