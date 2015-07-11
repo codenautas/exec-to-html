@@ -35,8 +35,7 @@ execToHtml.run = function run(commandLines, opts){
                     if(path.sep==='\\'){
                         commandLine='cmd.exe /c '+commandLine.substr(1);
                     }else{
-                        commandLine=process.env.SHELL+' '+commandLine.substr(1);
-                        console.log('commandLine',commandLine);
+                        commandLine=commandLine.substr(1);
                     }
                 }else{
                     lineForEmit={
