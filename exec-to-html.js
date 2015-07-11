@@ -54,7 +54,7 @@ execToHtml.run = function run(commandLines, opts){
                     f({text:data.toString('utf8'), origin:'stdout'});
                 });
                 executer.stdio[2].on('data', function(data){
-                    f({text:data.toString('utf8'), origin:'stderrr'});
+                    f({text:data.toString('utf8'), origin:'stderr'});
                 });
                 if(!commandLines.length){
                     executer.on('exit', resolve);

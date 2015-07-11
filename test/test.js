@@ -4,6 +4,7 @@ var stream = require('stream');
 var expect = require('expect.js');
 var execToHtml = require('..');
 
+var fixtures = require('./fixtures.js');
 
 var stream = require('stream');
 var util = require('util');
@@ -38,16 +39,9 @@ describe('exec-to-html', function(){
                 done();
             }).catch(done);
         });
-        it('list of commands', function(done){
-            var expectedLines=[
-                {origin:'shell', text:'echo hi5'},
-                {origin:'stdout', text:'hi5'+os.EOL},
-                {origin:'shell', text:'echo two'},
-                {origin:'stdout', text:'two'+os.EOL},
-                {origin:'shell', text:'echo last'},
-                {origin:'stdout', text:'last'+os.EOL}
-            ];
-            execToHtml.run(['!echo hi5','!echo two','!echo last']).onLine(function(lineInfo){
+        function testSequence(done,commands,expectedLines,opts){
+            expectedLines=expectedLines.slice(0);
+            execToHtml.run(commands,opts).onLine(function(lineInfo){
                 if(!expectedLines.length) done(new Error('many lines in first test'));
                 expect(lineInfo).to.eql(expectedLines.shift());
             }).then(function(exitCode){
@@ -55,6 +49,22 @@ describe('exec-to-html', function(){
                 expect(expectedLines.length).to.be(0);
                 done();
             }).catch(done);
+        }
+        it('merging stdin and stdout', function(done){
+            testSequence(done,'node test/fixtures.js outerrout',fixtures.outerrout.expected,{echo:false});
+        });
+        it('list of commands', function(done){
+            testSequence(done,
+                ['!echo hi5','!echo two','!echo last'],
+                [
+                    {origin:'shell', text:'echo hi5'},
+                    {origin:'stdout', text:'hi5'+os.EOL},
+                    {origin:'shell', text:'echo two'},
+                    {origin:'stdout', text:'two'+os.EOL},
+                    {origin:'shell', text:'echo last'},
+                    {origin:'stdout', text:'last'+os.EOL}
+                ]
+            );
         });
     });
 });
