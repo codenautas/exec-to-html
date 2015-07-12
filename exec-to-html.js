@@ -77,6 +77,20 @@ execToHtml.run = function run(commandLines, opts){
             return new Promises.Promise(streamer);
         }
     }
+    if(opts.collect){
+        var result={};
+        return runner.onLine(function(lineInfo){
+            if(!(lineInfo.origin in result)){
+                result[lineInfo.origin]='';
+            }
+            result[lineInfo.origin]+=lineInfo.text;
+        }).then(function(exit){
+            if(exit){
+                result.exit=exit;
+            }
+            return result;
+        });
+    }
     return runner;
 };
 

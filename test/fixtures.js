@@ -18,13 +18,12 @@ var fixtures={
             {origin:'shell', text:'echo last'},
             {origin:'stdout', text:'last'+os.EOL}
         ],
-        result:[{
-            stdout:'hi5'+os.EOL
-        },{
-            stdout:'two'+os.EOL
-        },{
-            stdout:'last'+os.EOL
-        }],
+        collect:{
+            shell:'echo hi5'+'echo two'+'echo last',
+            stdout:'hi5'+os.EOL+
+                   'two'+os.EOL+
+                   'last'+os.EOL
+        },
         skipped:!winOS // sacar en issue #1
     },
     'out-err-out':{
@@ -36,7 +35,7 @@ var fixtures={
         opts:{echo:false},
         collect:{
             stdout:'first lines'+os.EOL+'Last line.'+os.EOL,
-            stderr:'Error line. '+os.EOL
+            stderr:'Error line.'+os.EOL
         },
         skipped:!winOS // sacar en issue #1
     },

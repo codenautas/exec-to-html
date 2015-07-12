@@ -57,7 +57,7 @@ describe('exec-to-html', function(){
                 it('run fixture with collect. For fixutreName='+fixture.name,function(done){
                     var opts=_.clone(fixture.opts||{});
                     opts.collect=true;
-                    execToHtml.run(fixture.commands,fixture.opts).then(function(result){
+                    execToHtml.run(fixture.commands,opts).then(function(result){
                         expect(result).to.eql(fixture.collect);
                         done();
                     }).catch(done);
