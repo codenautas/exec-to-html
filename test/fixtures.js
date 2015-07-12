@@ -1,5 +1,6 @@
 "use strict";
 
+var _ = require('lodash');
 var os = require('os');
 var path = require('path');
 
@@ -36,7 +37,7 @@ var fixtures={
                 expected:[
                     {origin:'stdout', text:'ready to return 7'+os.EOL},
                 ],
-                exitCode:7
+                exit:7
             },
             last:{
                 expected:[
@@ -47,13 +48,13 @@ var fixtures={
         expected:[
             {origin:'command', text:'node test/fixtures.js exit-codes first'},
             {origin:'stdout', text:'ready to return 7'+os.EOL},
-            {origin:'exit-code', text:'7'},
+            {origin:'exit', text:'7'},
             {origin:'command', text:'node test/fixtures.js exit-codes last'},
             {origin:'stdout', text:'received exit code 7'+os.EOL},
-            {origin:'exit-code', text:''}
+            {origin:'exit', text:''}
         ],
-        opts:{exitCode:true},
-        skipped:!"issue #2"
+        opts:{exit:true},
+        skipped:"issue #2"
     }
 };
 
@@ -70,8 +71,8 @@ if(/fixtures\.js$/.test(process.argv[1])){
     fixture.expected.forEach(function(message){
         process[message.origin].write(message.text);
     });
-    if(fixture.exitCode){
-        process.exit(fixture.exitCode);
+    if(fixture.exit){
+        process.exitCode=fixture.exit;
     }
 }
 

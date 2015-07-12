@@ -3,6 +3,7 @@
 
 var execToHtml={};
 
+var _ = require('lodash');
 var stream = require('stream');
 var util = require('util');
 var Promises = require('best-promise');
@@ -58,22 +59,17 @@ execToHtml.run = function run(commandLines, opts){
                 executer.stdio[2].on('data', function(data){
                     flush({text:data.toString('utf8'), origin:'stderr'});
                 });
-                executer.on('exit', function(exitCode){
-                    if(opts.exitCode){
-                        flush({text:exitCode.toString(), origin:'exit-code'});
-                    }
-                    if(!commandLines.length){
-                        resolve(exitCode);
-                    }else{
-                        streamer(resolve,reject);
-                    }
-                });
-                executer.on('error', function(err){
-                    if(!commandLines.length){
-                        reject(err);
-                    }else{
-                        streamer(resolve,reject);
-                    }
+                _.forEach({exit:resolve, error:reject},function(endFunction, eventName){
+                    executer.on(eventName, function(result){
+                        if(opts[eventName]){
+                            flush({text:result.toString(), origin:eventName});
+                        }
+                        if(!commandLines.length){
+                            endFunction(result);
+                        }else{
+                            streamer(resolve,reject);
+                        }
+                    });
                 });
             };
             return new Promises.Promise(streamer);
