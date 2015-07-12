@@ -11,6 +11,8 @@ var spawn = require("child_process").spawn;
 
 var path = require('path');
 
+var winOS = path.sep==='\\';
+
 execToHtml.run = function run(commandLines, opts){
     if(!opts){
         opts={};
@@ -35,7 +37,7 @@ execToHtml.run = function run(commandLines, opts){
                     };
                     /* coverage depends on OS */
                     /* istanbul ignore next */
-                    if(path.sep==='\\'){
+                    if(winOS){
                         commandLine='cmd.exe /c '+commandLine.substr(1);
                     }else{
                         commandLine=commandLine.substr(1);
@@ -47,9 +49,9 @@ execToHtml.run = function run(commandLines, opts){
                     };
                 }
                 var cargs=commandLine.split(' ');
-                var cmd=cargs[0];
+                var command=cargs[0];
                 cargs.splice(0, 1);
-                var executer=spawn(cmd, cargs, {stdio: [ 'ignore', 'pipe', 'pipe']});
+                var executer=spawn(command, cargs, {stdio: [ 'ignore', 'pipe', 'pipe']});
                 if(opts.echo){
                     flush(lineForEmit);
                 }

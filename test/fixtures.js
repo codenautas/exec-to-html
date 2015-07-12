@@ -3,6 +3,7 @@
 var _ = require('lodash');
 var os = require('os');
 var path = require('path');
+var winOS = path.sep==='\\';
 
 var recivedExitCode = "issue #2"; // en este lugar hay que poner el exit-code recibido
 
@@ -17,7 +18,14 @@ var fixtures={
             {origin:'shell', text:'echo last'},
             {origin:'stdout', text:'last'+os.EOL}
         ],
-        skipped:path.sep==='/' // sacar en issue #1
+        result:[{
+            stdout:'hi5'+os.EOL
+        },{
+            stdout:'two'+os.EOL
+        },{
+            stdout:'last'+os.EOL
+        }],
+        skipped:!winOS // sacar en issue #1
     },
     'out-err-out':{
         expected:[
@@ -25,7 +33,12 @@ var fixtures={
             {origin:'stderr', text:'Error line.'+os.EOL},
             {origin:'stdout', text:'Last line.'+os.EOL},
         ],
-        opts:{echo:false}
+        opts:{echo:false},
+        collect:{
+            stdout:'first lines'+os.EOL+'Last line.'+os.EOL,
+            stderr:'Error line. '+os.EOL
+        },
+        skipped:!winOS // sacar en issue #1
     },
     'char-by-char':{
         expected:[
@@ -93,7 +106,17 @@ var fixtures={
             {origin:'exit', text:''}
         ],
         opts:{exit:true},
-        skipped:"issue #2"
+        skipped:"issue #2",
+    },
+    'encoding':{
+        commands:[{
+            command:winOS?'dir/b':'ls',
+            params:['texte*']
+        }],
+        expected:[
+            {origin:'stdout', text:'texte français.txt'}
+        ],
+        skipped:"issue #6"
     }
 };
 

@@ -41,7 +41,7 @@ describe('exec-to-html', function(){
             }).catch(done);
         });
         _.forEach(_.filter(fixtures,function(fixture){ return !fixture.skipped; }),function(fixture){
-            it('run fixture as expected. For fixutreName='+fixture.name,function(done){
+            it('run fixture with stream. For fixutreName='+fixture.name,function(done){
                 var expectedLines=fixture.expected.slice(0);
                 execToHtml.run(fixture.commands,fixture.opts).onLine(function(lineInfo){
                     // console.log('expect(',lineInfo,expectedLines.shift()); return;
@@ -53,6 +53,16 @@ describe('exec-to-html', function(){
                     done();
                 }).catch(done);
             });
+            if(fixture.collect){
+                it('run fixture with collect. For fixutreName='+fixture.name,function(done){
+                    var opts=_.clone(fixture.opts||{});
+                    opts.collect=true;
+                    execToHtml.run(fixture.commands,fixture.opts).then(function(result){
+                        expect(result).to.eql(fixture.collect);
+                        done();
+                    }).catch(done);
+                });
+            };
         });
     });
 });
