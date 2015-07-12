@@ -44,6 +44,7 @@ describe('exec-to-html', function(){
             it('run fixture as expected. For fixutreName='+fixture.name,function(done){
                 var expectedLines=fixture.expected.slice(0);
                 execToHtml.run(fixture.commands,fixture.opts).onLine(function(lineInfo){
+                    // console.log('expect(',lineInfo,expectedLines.shift()); return;
                     if(!expectedLines.length) done(new Error('many lines in first test'));
                     expect(lineInfo).to.eql(expectedLines.shift());
                 }).then(function(exitCode){

@@ -48,6 +48,24 @@ var fixtures={
         opts:{echo:false},
         skipped:"issue #4"
     },
+    'err-within-outline':{
+        expected:[
+            {origin:'stdout', text:'first line'+os.EOL+'incomplete text, '},
+            {origin:'stderr', text:'error message without EOL'},
+            {origin:'stdout', text:'rest of the line'+os.EOL+'another text'},
+        ],
+        splitter:' ', //yes one space!
+        delay:100,
+        opts:{echo:false},
+        skipped:"issue #5"
+    },
+    'incomplete-line':{
+        expected:[
+            {origin:'stdout', text:'first line'+os.EOL},
+            {origin:'stdout', text:'incomplete line'},
+        ],
+        opts:{echo:false},
+    },
     'exit-codes':{
         commands:[
             'node test/fixtures.js exit-codes first', 
@@ -93,6 +111,7 @@ if(/fixtures\.js$/.test(process.argv[1])){
     if('delay' in fixture){
         var message;
         var parts=[];
+        var splitter=fixture.splitter||'';
         var sendByPart=function sendByPart(){
             if(!parts.length){
                 if(!messages.length){
@@ -100,10 +119,10 @@ if(/fixtures\.js$/.test(process.argv[1])){
                 }else{
                     message=messages.shift();
                 }
-                parts='splitter' in fixture?message.text.split(fixture.splitter):[message];
+                parts='splitter' in fixture?message.text.split(splitter):[message];
             }else{
                 var part=parts.shift();
-                process[message.origin].write(part);
+                process[message.origin].write(part+(parts.length?splitter:''));
             }
             setTimeout(sendByPart,fixture.delay);
         };
