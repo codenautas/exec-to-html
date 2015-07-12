@@ -32,6 +32,8 @@ execToHtml.run = function run(commandLines, opts){
                         origin:'shell',
                         text:commandLine.substr(1)
                     };
+                    /* coverage depends on OS */
+                    /* istanbul ignore next */
                     if(path.sep==='\\'){
                         commandLine='cmd.exe /c '+commandLine.substr(1);
                     }else{
@@ -56,24 +58,23 @@ execToHtml.run = function run(commandLines, opts){
                 executer.stdio[2].on('data', function(data){
                     flush({text:data.toString('utf8'), origin:'stderr'});
                 });
-                if(!commandLines.length){
-                    /*
-                    executer.on('exit', function(exit){
-                        if(opts.exitCode){
-                            //flush({origin:'exit-code', text:exit||''});
-                        }
-                        resolve(exit);
-                    });
-                    */
-                    executer.on('exit', resolve);
-                    executer.on('error', reject);
-                }else{
-                    var continueStreaming=function(data){
+                executer.on('exit', function(exitCode){
+                    if(opts.exitCode){
+                        flush({text:exitCode.toString(), origin:'exit-code'});
+                    }
+                    if(!commandLines.length){
+                        resolve(exitCode);
+                    }else{
                         streamer(resolve,reject);
                     }
-                    executer.on('exit', continueStreaming);
-                    executer.on('error', continueStreaming);
-                };
+                });
+                executer.on('error', function(err){
+                    if(!commandLines.length){
+                        reject(err);
+                    }else{
+                        streamer(resolve,reject);
+                    }
+                });
             };
             return new Promises.Promise(streamer);
         }

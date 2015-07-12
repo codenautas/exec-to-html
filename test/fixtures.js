@@ -3,6 +3,8 @@
 var os = require('os');
 var path = require('path');
 
+var recivedExitCode = "issue #2"; // en este lugar hay que poner el exit-code recibido
+
 var fixtures={
     'list of builtin commands':{
         commands:['!echo hi5','!echo two','!echo last'],
@@ -38,7 +40,7 @@ var fixtures={
             },
             last:{
                 expected:[
-                    {origin:'stdout', text:'received exit code 7'+os.EOL},
+                    {origin:'stdout', text:'received exit code '+recivedExitCode+os.EOL},
                 ]
             }
         },
@@ -51,7 +53,7 @@ var fixtures={
             {origin:'exit-code', text:''}
         ],
         opts:{exitCode:true},
-        skipped:"issue #2"
+        skipped:!"issue #2"
     }
 };
 
