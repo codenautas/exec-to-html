@@ -20,7 +20,7 @@ var fixtures={
     },
     'out-err-out':{
         expected:[
-            {origin:'stdout', text:'first lines'+os.EOL+'via stdout.'+os.EOL},
+            {origin:'stdout', text:'first lines'+os.EOL},
             {origin:'stderr', text:'Error line.'+os.EOL},
             {origin:'stdout', text:'Last line.'+os.EOL},
         ],
@@ -35,6 +35,18 @@ var fixtures={
         splitter:'',
         delay:100,
         skipped:"issue #3"
+    },
+    'double-line':{
+        messages:[
+            {origin:'stdout', text:'first line'+os.EOL+
+                                   'second line'+os.EOL}
+        ],
+        expected:[
+            {origin:'stdout', text:'first line'+os.EOL},
+            {origin:'stdout', text:'second line'+os.EOL},
+        ],
+        opts:{echo:false},
+        skipped:"issue #4"
     },
     'exit-codes':{
         commands:[
@@ -77,8 +89,8 @@ if(/fixtures\.js$/.test(process.argv[1])){
     if(process.argv[3]){
         fixture=fixture.subCommands[process.argv[3]];
     }
+    var messages=fixture.messages||fixture.expected;
     if('delay' in fixture){
-        var messages=fixture.expected;
         var message;
         var parts=[];
         var sendByPart=function sendByPart(){
@@ -97,7 +109,7 @@ if(/fixtures\.js$/.test(process.argv[1])){
         };
         sendByPart();
     }else{
-        fixture.expected.forEach(function(message){
+        messages.forEach(function(message){
             process[message.origin].write(message.text);
         });
     }
