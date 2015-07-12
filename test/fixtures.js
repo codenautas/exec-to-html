@@ -16,7 +16,8 @@ var fixtures={
             {origin:'stdout', text:'two'+os.EOL},
             {origin:'shell', text:'echo last'},
             {origin:'stdout', text:'last'+os.EOL}
-        ]
+        ],
+        skipped:path.sep==='/' // sacar en issue #1
     },
     'out-err-out':{
         expected:[
@@ -24,8 +25,7 @@ var fixtures={
             {origin:'stderr', text:'Error line.'+os.EOL},
             {origin:'stdout', text:'Last line.'+os.EOL},
         ],
-        opts:{echo:false},
-        skipped:path.sep==='/' // sacar en issue #1
+        opts:{echo:false}
     },
     'char-by-char':{
         expected:[
