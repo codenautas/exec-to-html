@@ -27,6 +27,15 @@ var fixtures={
         opts:{echo:false},
         skipped:path.sep==='/' // sacar en issue #1
     },
+    'char-by-char':{
+        expected:[
+            {origin:'stdout', text:'slow'+os.EOL},
+        ],
+        opts:{echo:false},
+        splitter:'',
+        delay:100,
+        skipped:"issue #3"
+    },
     'exit-codes':{
         commands:[
             'node test/fixtures.js exit-codes first', 
@@ -68,9 +77,30 @@ if(/fixtures\.js$/.test(process.argv[1])){
     if(process.argv[3]){
         fixture=fixture.subCommands[process.argv[3]];
     }
-    fixture.expected.forEach(function(message){
-        process[message.origin].write(message.text);
-    });
+    if('delay' in fixture){
+        var messages=fixture.expected;
+        var message;
+        var parts=[];
+        var sendByPart=function sendByPart(){
+            if(!parts.length){
+                if(!messages.length){
+                    return;
+                }else{
+                    message=messages.shift();
+                }
+                parts='splitter' in fixture?message.text.split(fixture.splitter):[message];
+            }else{
+                var part=parts.shift();
+                process[message.origin].write(part);
+            }
+            setTimeout(sendByPart,fixture.delay);
+        };
+        sendByPart();
+    }else{
+        fixture.expected.forEach(function(message){
+            process[message.origin].write(message.text);
+        });
+    }
     if(fixture.exit){
         process.exitCode=fixture.exit;
     }
