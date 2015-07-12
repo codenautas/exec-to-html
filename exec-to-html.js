@@ -21,7 +21,7 @@ execToHtml.run = function run(commandLines, opts){
         commandLines=[commandLines];
     }
     var runner={
-        onLine:function(f){
+        onLine:function(flush){
             var streamer=function(resolve,reject){
                 var commandLine=commandLines[0];
                 commandLines=commandLines.slice(1);
@@ -48,15 +48,23 @@ execToHtml.run = function run(commandLines, opts){
                 cargs.splice(0, 1);
                 var executer=spawn(cmd, cargs, {stdio: [ 'ignore', 'pipe', 'pipe']});
                 if(opts.echo){
-                    f(lineForEmit);
+                    flush(lineForEmit);
                 }
                 executer.stdio[1].on('data', function(data){
-                    f({text:data.toString('utf8'), origin:'stdout'});
+                    flush({text:data.toString('utf8'), origin:'stdout'});
                 });
                 executer.stdio[2].on('data', function(data){
-                    f({text:data.toString('utf8'), origin:'stderr'});
+                    flush({text:data.toString('utf8'), origin:'stderr'});
                 });
                 if(!commandLines.length){
+                    /*
+                    executer.on('exit', function(exit){
+                        if(opts.exitCode){
+                            //flush({origin:'exit-code', text:exit||''});
+                        }
+                        resolve(exit);
+                    });
+                    */
                     executer.on('exit', resolve);
                     executer.on('error', reject);
                 }else{

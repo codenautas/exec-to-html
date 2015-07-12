@@ -1,5 +1,6 @@
 "use strict";
 
+var _ = require('lodash');
 var stream = require('stream');
 var expect = require('expect.js');
 var execToHtml = require('..');
@@ -39,32 +40,18 @@ describe('exec-to-html', function(){
                 done();
             }).catch(done);
         });
-        function testSequence(done,commands,expectedLines,opts){
-            expectedLines=expectedLines.slice(0);
-            execToHtml.run(commands,opts).onLine(function(lineInfo){
-                if(!expectedLines.length) done(new Error('many lines in first test'));
-                expect(lineInfo).to.eql(expectedLines.shift());
-            }).then(function(exitCode){
-                expect(exitCode).to.be(0);
-                expect(expectedLines.length).to.be(0);
-                done();
-            }).catch(done);
-        }
-        it('merging stdin and stdout', function(done){
-            testSequence(done,'node test/fixtures.js outerrout',fixtures.outerrout.expected,{echo:false});
-        });
-        it('list of commands', function(done){
-            testSequence(done,
-                ['!echo hi5','!echo two','!echo last'],
-                [
-                    {origin:'shell', text:'echo hi5'},
-                    {origin:'stdout', text:'hi5'+os.EOL},
-                    {origin:'shell', text:'echo two'},
-                    {origin:'stdout', text:'two'+os.EOL},
-                    {origin:'shell', text:'echo last'},
-                    {origin:'stdout', text:'last'+os.EOL}
-                ]
-            );
+        _.forEach(_.filter(fixtures,function(fixture){ return !fixture.skipped; }),function(fixture){
+            it('run fixture as expected. For fixutreName='+fixture.name,function(done){
+                var expectedLines=fixture.expected.slice(0);
+                execToHtml.run(fixture.commands,fixture.opts).onLine(function(lineInfo){
+                    if(!expectedLines.length) done(new Error('many lines in first test'));
+                    expect(lineInfo).to.eql(expectedLines.shift());
+                }).then(function(exitCode){
+                    expect(exitCode).to.be(0);
+                    expect(expectedLines.length).to.be(0);
+                    done();
+                }).catch(done);
+            });
         });
     });
 });
