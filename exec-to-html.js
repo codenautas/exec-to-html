@@ -64,12 +64,12 @@ execToHtml.run = function run(commandLines, opts){
                 }
                 var spawnOpts={stdio: [ 'ignore', 'pipe', 'pipe']};
                 if(opts.cwd){
-                    spawnOpts.cwd=opts.cwd;
+                    spawnOpts.cwd=path.resolve(opts.cwd);
                 }
-                var executer=spawn(commandInfo.command, commandInfo.params, spawnOpts);
                 if(opts.echo){
                     flush(lineForEmit);
                 }
+                var executer=spawn(commandInfo.command, commandInfo.params, spawnOpts);
                 _.forEach({stdout:1, stderr:2},function(streamIndex, streamName){
                     executer.stdio[streamIndex].on('data', function(data){
                         if(opts.encoding && false){

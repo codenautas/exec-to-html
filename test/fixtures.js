@@ -74,8 +74,7 @@ var fixtures={
             {origin:'stdout', text:'first line'+os.EOL},
             {origin:'stdout', text:'incomplete line'},
         ],
-        opts:{echo:false},
-        //skipped:true
+        opts:{echo:false}
     },
     'exit-codes':{
         commands:[
@@ -129,7 +128,6 @@ var fixtures={
             {origin:'shell', text:(winOS?'type':'cat')+' ansi-text.txt'},
             {origin:'stdout', text:'français in ANSI'}
         ],
-        skipped:true
     },
     'encoding-utf8':{
         commands:[{
@@ -142,7 +140,6 @@ var fixtures={
             {origin:'shell', text:(winOS?'type':'cat')+' utf8-text.txt'},
             {origin:'stdout', text:'français in UTF8'}
         ],
-        skipped:true
     }
 };
 
