@@ -58,7 +58,6 @@ execToHtml.run = function run(commandLines, opts){
                         commandInfo.params.unshift(commandInfo.command);
                         commandInfo.params.unshift('/c');
                         commandInfo.command='cmd.exe';
-                    }else{   //console.log("Using non-win os with");
                     }
                 }else{
                     lineForEmit.origin='command';
@@ -73,7 +72,7 @@ execToHtml.run = function run(commandLines, opts){
                 }
                 _.forEach({stdout:1, stderr:2},function(streamIndex, streamName){
                     executer.stdio[streamIndex].on('data', function(data){
-                        //console.log('data', data.toString());
+                        //console.log('data on ', (streamIndex == 1 ? "stdout" : streamIndex==2 ? "stderr" : streamIndex), data.toString());
                         if(opts.encoding && false){
                             console.log('dentro','français');
                             ['utf8','win1251','latin1','cp437'].forEach(function(encoding){
@@ -85,6 +84,13 @@ execToHtml.run = function run(commandLines, opts){
                         var rData = opts.encoding?iconv.decode(data,opts.encoding):data.toString();
                         if(!executer.buffer) { 
                             executer.buffer = '';
+                            executer.origin = streamName;
+                        }
+                        //console.log("channel current(" + executer.channel+") new(" + streamIndex + ")");
+                        if(streamName != executer.origin && executer.buffer.length) {
+                            var buffer = executer.buffer;
+                            executer.buffer = '';
+                            flush({ text:buffer, origin:executer.origin });
                             executer.origin = streamName;
                         }
                         executer.buffer += rData;
@@ -101,6 +107,7 @@ execToHtml.run = function run(commandLines, opts){
                             executer.buffer = '';
                             flush({ text:buffer, origin:streamName });
                         }
+                        
                     });
                 });
                 _.forEach({exit:resolve, error:reject},function(endFunction, eventName){

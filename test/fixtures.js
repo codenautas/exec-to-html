@@ -5,7 +5,7 @@ var os = require('os');
 var path = require('path');
 var winOS = path.sep==='\\';
 
-var recivedExitCode = "7"; //"issue #2"; // en este lugar hay que poner el exit-code recibido
+var recivedExitCode = "0";//"issue #2"; // en este lugar hay que poner el exit-code recibido
 
 var fixtures={
     'list of builtin commands':{
@@ -59,14 +59,17 @@ var fixtures={
     },
     'err-within-outline':{
         expected:[
-            {origin:'stdout', text:'first line'+os.EOL+'incomplete text, '},
+            //{origin:'stdout', text:'first line'+os.EOL+'incomplete text, '},
+            {origin:'stdout', text:'first line'+os.EOL},
+            {origin:'stdout', text:'incomplete text, '},
             {origin:'stderr', text:'error message without EOL'},
-            {origin:'stdout', text:'rest of the line'+os.EOL+'another text'},
+            //{origin:'stdout', text:'rest of the line'+os.EOL+'another text'},
+            {origin:'stdout', text:'rest of the line'+os.EOL},
+            {origin:'stdout', text:'another text'},
         ],
         splitter:' ', //yes one space!
         delay:100,
-        opts:{echo:false},
-        skipped:"issue #5"
+        opts:{echo:false}
     },
     'incomplete-line':{
         expected:[
@@ -91,8 +94,7 @@ var fixtures={
             last:{
                 expected:[
                     {origin:'stdout', text:'received exit code '+recivedExitCode+os.EOL},
-                ],
-                exit: 0
+                ]
             }
         },
         expected:[
@@ -100,7 +102,7 @@ var fixtures={
             {origin:'stdout', text:'ready to return 7'+os.EOL},
             {origin:'exit', text:'7'},
             {origin:'command', text:'node test/fixtures.js exit-codes last'},
-            {origin:'stdout', text:'received exit code 7'+os.EOL},
+            {origin:'stdout', text:'received exit code 0'+os.EOL},
             {origin:'exit', text:'0'}
         ],
         opts:{echo:true, exit:true},
