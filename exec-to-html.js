@@ -88,15 +88,11 @@ execToHtml.run = function run(commandLines, opts){
                             executer.origin = streamName;
                         }
                         executer.buffer += rData;
-                        if(rData.substring(rData.length-1) == os.EOL) {
+                        if(rData.substring(rData.length-os.EOL.length) == os.EOL) {
                             var buffer = executer.buffer;
                             executer.buffer = '';
                             flush({ text:buffer, origin:streamName });
                         }
-//                        flush({
-//                            text:opts.encoding?iconv.decode(data,opts.encoding):data.toString(), 
-//                            origin:streamName
-//                        });
                     });
                 });
                 _.forEach({exit:resolve, error:reject},function(endFunction, eventName){
