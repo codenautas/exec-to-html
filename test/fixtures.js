@@ -57,17 +57,39 @@ var fixtures={
     },
     'err-within-outline':{
         expected:[
-            //{origin:'stdout', text:'first line'+os.EOL+'incomplete text, '},
             {origin:'stdout', text:'first line'+os.EOL},
             {origin:'stdout', text:'incomplete text, '},
             {origin:'stderr', text:'error message without EOL'},
-            //{origin:'stdout', text:'rest of the line'+os.EOL+'another text'},
             {origin:'stdout', text:'rest of the line'+os.EOL},
             {origin:'stdout', text:'another text'},
         ],
         splitter:' ', //yes one space!
         delay:100,
         opts:{echo:false}
+    },
+    'err-within-outline-no-buffer':{
+        expected:[
+            {origin:'stdout', text:'first '},
+            {origin:'stdout', text:'line'+os.EOL},
+            {origin:'stdout', text:'incomplete '},
+            {origin:'stdout', text:'text, '},
+            
+            {origin:'stderr', text:'error '},
+            {origin:'stderr', text:'message '},
+            {origin:'stderr', text:'without '},
+            
+            {origin:'stderr', text:'EOL'},
+            {origin:'stdout', text:'rest '},
+            {origin:'stdout', text:'of '},
+            {origin:'stdout', text:'the '},
+            {origin:'stdout', text:'line'+os.EOL},
+            {origin:'stdout', text:'another '},
+            {origin:'stdout', text:'text'},
+        ],
+        splitter:' ', //yes one space!
+        delay:40,
+        opts:{echo:false, buffering:false},
+        //skipped:true
     },
     'incomplete-line':{
         expected:[

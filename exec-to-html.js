@@ -22,6 +22,9 @@ execToHtml.run = function run(commandLines, opts){
     if(!('echo' in opts)){
         opts.echo=true;
     }
+    if(!('buffering' in opts)) {
+        opts.buffering = true;
+    }
     if(typeof commandLines==='string'){
         commandLines=[commandLines];
     }
@@ -81,36 +84,40 @@ execToHtml.run = function run(commandLines, opts){
                         }
                         
                         var rData = opts.encoding?iconv.decode(data,opts.encoding):data.toString();
-                        if(!executer.buffer) { 
-                            executer.buffer = '';
-                            executer.origin = streamName;
-                        }
-                        if(streamName != executer.origin && executer.buffer.length) {
-                            var buffer = executer.buffer;
-                            executer.buffer = '';
-                            flush({ text:buffer, origin:executer.origin });
-                            executer.origin = streamName;
-                        }
-                        executer.buffer += rData;
-                        if(executer.buffer.match(os.EOL)) {
-                            var buffers = executer.buffer.split(os.EOL);
-                            var i=0;
-                            for( ; i<buffers.length-1; ++i) {
-                                flush({ text:buffers[i]+os.EOL, origin:streamName });
+                        if(! opts.buffering) {
+                            flush({ text:rData, origin:streamName });
+                        } else {
+                            if(!executer.buffer) { 
+                                executer.buffer = '';
+                                executer.origin = streamName;
                             }
-                            executer.buffer = buffers[i];
-                        }
-                        if(executer.buffer.substring(executer.buffer.length-os.EOL.length) == os.EOL) {
-                            var buffer = executer.buffer;
-                            executer.buffer = '';
-                            flush({ text:buffer, origin:streamName });
+                            if(streamName != executer.origin && executer.buffer.length) {
+                                var buffer = executer.buffer;
+                                executer.buffer = '';
+                                flush({ text:buffer, origin:executer.origin });
+                                executer.origin = streamName;
+                            }
+                            executer.buffer += rData;
+                            if(executer.buffer.match(os.EOL)) {
+                                var buffers = executer.buffer.split(os.EOL);
+                                var i=0;
+                                for( ; i<buffers.length-1; ++i) {
+                                    flush({ text:buffers[i]+os.EOL, origin:streamName });
+                                }
+                                executer.buffer = buffers[i];
+                            }
+                            if(executer.buffer.substring(executer.buffer.length-os.EOL.length) == os.EOL) {
+                                var buffer = executer.buffer;
+                                executer.buffer = '';
+                                flush({ text:buffer, origin:streamName });
+                            }
                         }
                         
                     });
                 });
                 _.forEach({exit:resolve, error:reject},function(endFunction, eventName){
                     executer.on(eventName, function(result){
-                        if(eventName == 'exit' && executer.buffer && executer.buffer.length) {
+                        if((eventName == 'exit' || eventName == 'error' ) && executer.buffer && executer.buffer.length) {
                             flush({text:executer.buffer, origin: executer.origin});
                         }
                         //console.log("event", eventName, "result", result, "executer", executer.buffer);
