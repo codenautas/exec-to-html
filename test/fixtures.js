@@ -5,7 +5,7 @@ var os = require('os');
 var path = require('path');
 var winOS = path.sep==='\\';
 
-var recivedExitCode = "issue #2"; // en este lugar hay que poner el exit-code recibido
+var recivedExitCode = "7"; //"issue #2"; // en este lugar hay que poner el exit-code recibido
 
 var fixtures={
     'list of builtin commands':{
@@ -36,7 +36,7 @@ var fixtures={
         collect:{
             stdout:'first lines'+os.EOL+'Last line.'+os.EOL,
             stderr:'Error line.'+os.EOL
-        },
+        }
     },
     'char-by-char':{
         expected:[
@@ -44,8 +44,7 @@ var fixtures={
         ],
         opts:{echo:false},
         splitter:'',
-        delay:100,
-        skipped:"issue #3"
+        delay:100
     },
     'double-line':{
         messages:[
@@ -76,6 +75,7 @@ var fixtures={
             {origin:'stdout', text:'incomplete line'},
         ],
         opts:{echo:false},
+        //skipped:true
     },
     'exit-codes':{
         commands:[
@@ -92,7 +92,8 @@ var fixtures={
             last:{
                 expected:[
                     {origin:'stdout', text:'received exit code '+recivedExitCode+os.EOL},
-                ]
+                ],
+                exit: 0
             }
         },
         expected:[
@@ -101,7 +102,7 @@ var fixtures={
             {origin:'exit', text:'7'},
             {origin:'command', text:'node test/fixtures.js exit-codes last'},
             {origin:'stdout', text:'received exit code 7'+os.EOL},
-            {origin:'exit', text:''}
+            {origin:'exit', text:'0'}
         ],
         opts:{echo:true, exit:true},
         skipped:"issue #2",
@@ -129,6 +130,7 @@ var fixtures={
             {origin:'shell', text:(winOS?'type':'cat')+' ansi-text.txt'},
             {origin:'stdout', text:'français in ANSI'}
         ],
+        skipped:true
     },
     'encoding-utf8':{
         commands:[{
@@ -141,6 +143,7 @@ var fixtures={
             {origin:'shell', text:(winOS?'type':'cat')+' utf8-text.txt'},
             {origin:'stdout', text:'français in UTF8'}
         ],
+        skipped:true
     }
 };
 
