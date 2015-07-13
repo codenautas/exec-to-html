@@ -56,7 +56,6 @@ var fixtures={
             {origin:'stdout', text:'second line'+os.EOL},
         ],
         opts:{echo:false},
-        skipped:"issue #4"
     },
     'err-within-outline':{
         expected:[
