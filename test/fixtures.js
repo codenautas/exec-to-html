@@ -25,7 +25,6 @@ var fixtures={
                    'two'+os.EOL+
                    'last'+os.EOL
         },
-        skipped:!winOS // sacar en issue #1
     },
     'out-err-out':{
         expected:[
@@ -38,7 +37,6 @@ var fixtures={
             stdout:'first lines'+os.EOL+'Last line.'+os.EOL,
             stderr:'Error line.'+os.EOL
         },
-        skipped:!winOS // sacar en issue #1
     },
     'char-by-char':{
         expected:[
@@ -114,10 +112,11 @@ var fixtures={
             shell:true,
             params:['texte*']
         }],
-        opts:{echo:false, cwd:'./test', encoding:'cp437'},
+        opts:{echo:false, cwd:'./test', encoding:winOS?'cp437':''},
         expected:[
             {origin:'stdout', text:'texte français.txt'+os.EOL}
-        ]
+        ],
+        skipped:!winOS
     },
     'encoding-ansi':{
         commands:[{

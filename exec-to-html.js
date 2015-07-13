@@ -88,14 +88,16 @@ execToHtml.run = function run(commandLines, opts){
                 });
                 _.forEach({exit:resolve, error:reject},function(endFunction, eventName){
                     executer.on(eventName, function(result){
-                        if(opts[eventName]){
-                            flush({text:result.toString(), origin:eventName});
-                        }
-                        if(!commandLines.length){
-                            endFunction(result);
-                        }else{
-                            streamer(resolve,reject);
-                        }
+                        setTimeout(function(){
+                            if(opts[eventName]){
+                                flush({text:result.toString(), origin:eventName});
+                            }
+                            if(!commandLines.length){
+                                endFunction(result);
+                            }else{
+                                streamer(resolve,reject);
+                            }
+                        },1);
                     });
                 });
             };
