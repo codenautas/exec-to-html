@@ -67,7 +67,22 @@ var fixtures={
         delay:100,
         opts:{echo:false}
     },
-    'err-within-outline-no-buffer':{
+    'err-within-outline-no-buffer-big':{
+        expected:[
+            {origin:'stdout', text:'first line'+os.EOL+'incomplete text, '},
+            {origin:'stderr', text:'error message without EOL'},
+            {origin:'stdout', text:'rest of the line'+os.EOL+'another text'}
+        ],
+        opts:{echo:false, buffering:false}
+    },
+    'err-within-outline-no-buffer-little':{
+        messages:[
+            {origin:'stdout', text:'first line'+os.EOL},
+            {origin:'stdout', text:'incomplete text, '},
+            {origin:'stderr', text:'error message without EOL'},
+            {origin:'stdout', text:'rest of the line'+os.EOL},
+            {origin:'stdout', text:'another text'},
+        ],
         expected:[
             {origin:'stdout', text:'first '},
             {origin:'stdout', text:'line'+os.EOL},
@@ -89,7 +104,6 @@ var fixtures={
         splitter:' ', //yes one space!
         delay:40,
         opts:{echo:false, buffering:false},
-        //skipped:true
     },
     'incomplete-line':{
         expected:[
@@ -112,9 +126,8 @@ var fixtures={
             },
             last:{
                 expected:[
-                    {origin:'stdout', text:'received exit code 0'+os.EOL},
-                ],
-                exit:0
+                    {origin:'stdout', text:'ready to return normally'+os.EOL},
+                ]
             }
         },
         expected:[
@@ -122,7 +135,7 @@ var fixtures={
             {origin:'stdout', text:'ready to return 7'+os.EOL},
             {origin:'exit', text:'7'},
             {origin:'command', text:'node test/fixtures.js exit-codes last'},
-            {origin:'stdout', text:'received exit code 0'+os.EOL},
+            {origin:'stdout', text:'ready to return normally'+os.EOL},
             {origin:'exit', text:'0'}
         ],
         opts:{echo:true, exit:true}
@@ -201,7 +214,11 @@ if(/fixtures\.js$/.test(process.argv[1])){
         });
     }
     if(fixture.exit){
-        process.exitCode=fixture.exit;
+        if(process.version<='v0.12'){
+            process.exit(fixture.exit);
+        }else{
+            process.exitCode=fixture.exit;
+        }
     }
 }
 

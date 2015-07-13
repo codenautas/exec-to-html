@@ -117,7 +117,7 @@ execToHtml.run = function run(commandLines, opts){
                 });
                 _.forEach({exit:resolve, error:reject},function(endFunction, eventName){
                     executer.on(eventName, function(result){
-                        if((eventName == 'exit' || eventName == 'error' ) && executer.buffer && executer.buffer.length) {
+                        if(executer.buffer && executer.buffer.length) {
                             flush({text:executer.buffer, origin: executer.origin});
                         }
                         //console.log("event", eventName, "result", result, "executer", executer.buffer);
