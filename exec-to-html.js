@@ -72,7 +72,6 @@ execToHtml.run = function run(commandLines, opts){
                 }
                 _.forEach({stdout:1, stderr:2},function(streamIndex, streamName){
                     executer.stdio[streamIndex].on('data', function(data){
-                        //console.log('data on ', (streamIndex == 1 ? "stdout" : streamIndex==2 ? "stderr" : streamIndex), data.toString());
                         if(opts.encoding && false){
                             console.log('dentro','français');
                             ['utf8','win1251','latin1','cp437'].forEach(function(encoding){
@@ -86,7 +85,6 @@ execToHtml.run = function run(commandLines, opts){
                             executer.buffer = '';
                             executer.origin = streamName;
                         }
-                        //console.log("channel current(" + executer.channel+") new(" + streamIndex + ")");
                         if(streamName != executer.origin && executer.buffer.length) {
                             var buffer = executer.buffer;
                             executer.buffer = '';
@@ -140,6 +138,7 @@ execToHtml.run = function run(commandLines, opts){
             }
             result[lineInfo.origin]+=lineInfo.text;
         }).then(function(exit){
+            //console.log("exit", exit);
             if(exit){
                 result.exit=exit;
             }

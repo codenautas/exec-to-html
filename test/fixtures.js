@@ -5,8 +5,6 @@ var os = require('os');
 var path = require('path');
 var winOS = path.sep==='\\';
 
-var recivedExitCode = "0";//"issue #2"; // en este lugar hay que poner el exit-code recibido
-
 var fixtures={
     'list of builtin commands':{
         commands:['!echo hi5','!echo two','!echo last'],
@@ -93,8 +91,9 @@ var fixtures={
             },
             last:{
                 expected:[
-                    {origin:'stdout', text:'received exit code '+recivedExitCode+os.EOL},
-                ]
+                    {origin:'stdout', text:'received exit code 0'+os.EOL},
+                ],
+                exit:0
             }
         },
         expected:[
@@ -105,8 +104,7 @@ var fixtures={
             {origin:'stdout', text:'received exit code 0'+os.EOL},
             {origin:'exit', text:'0'}
         ],
-        opts:{echo:true, exit:true},
-        skipped:"issue #2",
+        opts:{echo:true, exit:true}
     },
     'extended-filename':{
         commands:[{
