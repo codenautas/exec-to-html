@@ -72,6 +72,21 @@ execToHtml.run = function run(commandLines, opts){
                 if(opts.echo){
                     flush(lineForEmit);
                 }
+                var endFunctions={exit:resolve, error:reject};
+                var finalizer=function(result, eventName){
+                    if(executer.buffer && executer.buffer.length) {
+                        flush({text:executer.buffer, origin: executer.origin});
+                    }
+                    //console.log("event", eventName, "result", result, "executer", executer.buffer);
+                    if(opts[eventName]){
+                        flush({text:result.toString(), origin:eventName});
+                    }
+                    if(!commandLines.length){
+                        endFunctions[eventName](result);
+                    }else{
+                        streamer(resolve,reject);
+                    }
+                }
                 var executer=spawn(commandInfo.command, commandInfo.params, spawnOpts);
                 _.forEach({stdout:1, stderr:2},function(streamIndex, streamName){
                     executer.stdio[streamIndex].on('data', function(data){
@@ -112,25 +127,11 @@ execToHtml.run = function run(commandLines, opts){
                                 flush({ text:buffer, origin:streamName });
                             }
                         }
-                        
                     });
                 });
-                _.forEach({exit:resolve, error:reject},function(endFunction, eventName){
+                _.forEach(endFunctions,function(endFunction, eventName){
                     executer.on(eventName, function(result){
-                        if(executer.buffer && executer.buffer.length) {
-                            flush({text:executer.buffer, origin: executer.origin});
-                        }
-                        //console.log("event", eventName, "result", result, "executer", executer.buffer);
-                        setTimeout(function(){
-                            if(opts[eventName]){
-                                flush({text:result.toString(), origin:eventName});
-                            }
-                            if(!commandLines.length){
-                                endFunction(result);
-                            }else{
-                                streamer(resolve,reject);
-                            }
-                        },1);
+                        finalizer(result,eventName);
                     });
                 });
             };
