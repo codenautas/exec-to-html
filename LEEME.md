@@ -31,6 +31,11 @@ también disponible en:
 Ejecuta comandos en el servidor enviando la salida en un *Stream* hacia el navegador.
 
 
+# Objetivo principal
+ 
+ * Correr procesos en el servidor e ir enviando la salida de la consola al navegador
+
+
 ## Licencias
 
 

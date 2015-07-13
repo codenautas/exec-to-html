@@ -23,6 +23,18 @@ Ejecuta comandos en el servidor enviando la salida en un *Stream* hacia el naveg
 
 [!--lang:en-->
 
+# Main goal
+
+ * To call process in the back-end sending the output to de front-end
+
+<!--lang:es--]
+
+# Objetivo principal
+ 
+ * Correr procesos en el servidor e ir enviando la salida de la consola al navegador
+
+[!--lang:en-->
+
 ## License
 
 <!--lang:es--]

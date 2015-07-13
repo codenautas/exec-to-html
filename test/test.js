@@ -42,7 +42,11 @@ describe('exec-to-html', function(){
         });
         _.forEach(_.filter(fixtures,function(fixture){ return !fixture.skipped; }),function(fixture){
             it('run fixture with stream. For fixutreName='+fixture.name,function(done){
-                this.timeout(5000);
+                if(process.env.APPVEYOR){
+                    this.timeout(9000);
+                }else{
+                    this.timeout(5000);
+                }
                 var expectedLines=fixture.expected.slice(0);
                 execToHtml.run(fixture.commands,fixture.opts).onLine(function(lineInfo){
                     // console.log('expect(',lineInfo,expectedLines.shift()); return;
