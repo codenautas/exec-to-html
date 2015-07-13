@@ -8,6 +8,7 @@ var stream = require('stream');
 var util = require('util');
 var Promises = require('best-promise');
 var spawn = require("child_process").spawn;
+var iconv = require('iconv-lite');
 
 var path = require('path');
 
@@ -28,38 +29,62 @@ execToHtml.run = function run(commandLines, opts){
             var streamer=function(resolve,reject){
                 var commandLine=commandLines[0];
                 commandLines=commandLines.slice(1);
-                var shell=commandLine[0]==='!';
-                var lineForEmit;
-                if(shell){ 
-                    lineForEmit={
-                        origin:'shell',
-                        text:commandLine.substr(1)
-                    };
+                var lineForEmit={};
+                if(typeof commandLine === 'string'){
+                    var commandInfo={};
+                    commandInfo.shell=commandLine[0]==='!';
+                    if(commandInfo.shell){
+                        commandLine=commandLine.substr(1);
+                    }
+                    commandInfo.params=commandLine.split(' ');
+                    commandInfo.command=commandInfo.params[0];
+                    commandInfo.params.splice(0, 1);
+                    lineForEmit.text=commandLine;
+                }else{
+                    var commandInfo=commandLine;
+                    lineForEmit.text=[commandLine.command].concat(commandLine.params.map(function(param){
+                        if(/ /.test(param)){
+                            return JSON.stringify(param);
+                        }
+                        return param;
+                    })).join(' ');
+                }
+                if(commandInfo.shell){ 
+                    lineForEmit.origin='shell';
                     /* coverage depends on OS */
                     /* istanbul ignore next */
                     if(winOS){
-                        commandLine='cmd.exe /c '+commandLine.substr(1);
+                        commandInfo.params.unshift(commandInfo.command);
+                        commandInfo.params.unshift('/c');
+                        commandInfo.command='cmd.exe';
                     }else{
-                        commandLine=commandLine.substr(1);
                     }
                 }else{
-                    lineForEmit={
-                        origin:'command',
-                        text:commandLine
-                    };
+                    lineForEmit.origin='command';
                 }
-                var cargs=commandLine.split(' ');
-                var command=cargs[0];
-                cargs.splice(0, 1);
-                var executer=spawn(command, cargs, {stdio: [ 'ignore', 'pipe', 'pipe']});
+                var spawnOpts={stdio: [ 'ignore', 'pipe', 'pipe']};
+                if(opts.cwd){
+                    spawnOpts.cwd=opts.cwd;
+                }
+                var executer=spawn(commandInfo.command, commandInfo.params, spawnOpts);
                 if(opts.echo){
                     flush(lineForEmit);
                 }
-                executer.stdio[1].on('data', function(data){
-                    flush({text:data.toString('utf8'), origin:'stdout'});
-                });
-                executer.stdio[2].on('data', function(data){
-                    flush({text:data.toString('utf8'), origin:'stderr'});
+                _.forEach({stdout:1, stderr:2},function(streamIndex, streamName){
+                    executer.stdio[streamIndex].on('data', function(data){
+                        if(opts.encoding && false){
+                            console.log('dentro','français');
+                            ['utf8','win1251','latin1','cp437'].forEach(function(encoding){
+                                console.log(encoding, iconv.decode(data,encoding), encoding==opts.encoding, iconv.decode(data,opts.encoding));
+                            });
+                            console.log('saliendo',opts.encoding?iconv.decode(data,opts.encoding):data.toString());
+                        }
+                        var x;
+                        flush({
+                            text:opts.encoding?iconv.decode(data,opts.encoding):data.toString(), 
+                            origin:streamName
+                        });
+                    });
                 });
                 _.forEach({exit:resolve, error:reject},function(endFunction, eventName){
                     executer.on(eventName, function(result){

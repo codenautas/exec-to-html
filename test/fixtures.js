@@ -10,6 +10,7 @@ var recivedExitCode = "issue #2"; // en este lugar hay que poner el exit-code re
 var fixtures={
     'list of builtin commands':{
         commands:['!echo hi5','!echo two','!echo last'],
+        opts:{echo:true},
         expected:[
             {origin:'shell', text:'echo hi5'},
             {origin:'stdout', text:'hi5'+os.EOL},
@@ -104,18 +105,43 @@ var fixtures={
             {origin:'stdout', text:'received exit code 7'+os.EOL},
             {origin:'exit', text:''}
         ],
-        opts:{exit:true},
+        opts:{echo:true, exit:true},
         skipped:"issue #2",
     },
-    'encoding':{
+    'extended-filename':{
         commands:[{
             command:winOS?'dir/b':'ls',
+            shell:true,
             params:['texte*']
         }],
+        opts:{echo:false, cwd:'./test', encoding:'cp437'},
         expected:[
-            {origin:'stdout', text:'texte fran�ais.txt'}
+            {origin:'stdout', text:'texte français.txt'+os.EOL}
+        ]
+    },
+    'encoding-ansi':{
+        commands:[{
+            command:winOS?'type':'cat',
+            shell:true,
+            params:['ansi-text.txt']
+        }],
+        opts:{echo:true, cwd:'./test', encoding:'latin1'},
+        expected:[
+            {origin:'shell', text:(winOS?'type':'cat')+' ansi-text.txt'},
+            {origin:'stdout', text:'français in ANSI'}
         ],
-        skipped:"issue #6"
+    },
+    'encoding-utf8':{
+        commands:[{
+            command:winOS?'type':'cat',
+            shell:true,
+            params:['utf8-text.txt']
+        }],
+        opts:{echo:true, cwd:'./test'},
+        expected:[
+            {origin:'shell', text:(winOS?'type':'cat')+' utf8-text.txt'},
+            {origin:'stdout', text:'français in UTF8'}
+        ],
     }
 };
 

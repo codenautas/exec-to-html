@@ -10,13 +10,13 @@
   }],
   "dependencies": {
     "lodash": ">=3.10.0",
-
+    "iconv-lite": "^0.4.11",
     "best-promise": ">=0.2.2"
   },
   "devDependencies": {
     "istanbul": "~0.3.17",
     "mocha": "~2.2.5",
-    "expect.js": ">=0.3.1"
+    "expect.js": "^0.3.1"
   },
   "main": "exec-to-html.js",
   "engines": {
