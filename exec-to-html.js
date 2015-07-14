@@ -136,10 +136,10 @@ execToHtml.run = function run(commandLines, opts){
                             if(executer.buffer.match(os.EOL)) {
                                 var buffers = executer.buffer.split(os.EOL);
                                 var i=0;
-                                for( ; i<buffers.length-1; ++i) {
+                                for( ; i<buffers.length-2; ++i) {
                                     flush({origin:streamName,  text:buffers[i]+os.EOL});
                                 }
-                                executer.buffer = buffers[i];
+                                executer.buffer = buffers[i]+os.EOL;
                             }
                             if(executer.buffer.substring(executer.buffer.length-os.EOL.length) == os.EOL) {
                                 var buffer = executer.buffer;
