@@ -81,8 +81,10 @@ execToHtml.run = function run(commandLines, opts){
                 var eventNameForEnd = null;
                 var resultForEnd = null;
                 var finalizer=function(bitmask, result, eventName){
-                    eventNameForEnd = eventName || eventNameForEnd;
-                    resultForEnd = result || resultForEnd;
+                    if(eventName){
+                        eventNameForEnd = eventName;
+                        resultForEnd = result;
+                    }
                     remainSignals = remainSignals & ~bitmask;
                     if(remainSignals) return;
                     if(executer.buffer && executer.buffer.length) {
