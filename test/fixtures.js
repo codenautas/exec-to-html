@@ -33,8 +33,10 @@ var fixtures={
         opts:{echo:false},
         collect:{
             stdout:'first lines'+os.EOL+'Last line.'+os.EOL,
-            stderr:'Error line.'+os.EOL
-        }
+            stderr:'Error line.'+os.EOL,
+            exit:123
+        },
+        exit:123
     },
     'char-by-char':{
         expected:[
@@ -140,7 +142,7 @@ var fixtures={
         ],
         opts:{echo:true, exit:true}
     },
-    'extended-filename':{
+    'dir':{
         commands:[{
             command:winOS?'dir/b':'ls',
             shell:true,
@@ -148,6 +150,19 @@ var fixtures={
         }],
         opts:{echo:false, cwd:'./test', encoding:winOS?'cp437':''},
         expected:[
+            {origin:'stdout', text:'texte français.txt'+os.EOL}
+        ],
+        skipped:!winOS
+    },
+    'extended-filename':{
+        commands:[{
+            command:winOS?'dir/b':'ls',
+            shell:true,
+            params:['texte français.txt']
+        }],
+        opts:{echo:true, cwd:'./test', encoding:winOS?'cp437':''},
+        expected:[
+            {origin:'shell', text:(winOS?'dir/b':'ls')+' "texte français.txt"'},
             {origin:'stdout', text:'texte français.txt'+os.EOL}
         ],
         skipped:!winOS

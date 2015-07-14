@@ -19,12 +19,18 @@ var path = require('path');
 
 var winOS = path.sep==='\\';
 
+function specialReject(message){
+    var p=Promises.reject(new Error(message));
+    return {
+        onLine:function(){ return p; },
+        then:function(){ return p; },
+        'catch':function(x){ return p.catch(x); }
+    };
+}
+
 execToHtml.run = function run(commandLines, opts){
-    if(!opts){
-        opts={};
-    }
-    if(!('echo' in opts)){
-        opts.echo=true;
+    if(!opts || !('echo' in opts)){
+        return specialReject('execToHtml.run ERROR: option echo is mandatory');
     }
     if(!('buffering' in opts)) {
         opts.buffering = true;
@@ -103,6 +109,7 @@ execToHtml.run = function run(commandLines, opts){
                 var executer=spawn(commandInfo.command, commandInfo.params, spawnOpts);
                 _.forEach({stdout:1, stderr:2},function(streamIndex, streamName){
                     executer.stdio[streamIndex].on('data', function(data){
+                        /* NO BORRAR, QUIZÁS LO NECESITEMOS PARA DEDUCIR encoding
                         if(opts.encoding && false){
                             console.log('dentro','français');
                             ['utf8','win1251','latin1','cp437'].forEach(function(encoding){
@@ -110,6 +117,7 @@ execToHtml.run = function run(commandLines, opts){
                             });
                             console.log('saliendo',opts.encoding?iconv.decode(data,opts.encoding):data.toString());
                         }
+                        */
                         var rData = opts.encoding?iconv.decode(data,opts.encoding):data.toString();
                         if(! opts.buffering) {
                             flush({origin:streamName,  text:rData});

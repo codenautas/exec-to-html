@@ -51,7 +51,7 @@ describe('exec-to-html', function(){
                     // console.log('expect(',lineInfo,expectedLines.shift()); return;
                     obtainedLines.push(lineInfo);
                 }).then(function(exitCode){
-                    expect(exitCode).to.be(0);
+                    expect(exitCode).to.be(fixture.exit||0);
                     expect(obtainedLines).to.eql(fixture.expected);
                     done();
                 }).catch(done);
@@ -66,6 +66,19 @@ describe('exec-to-html', function(){
                     }).catch(done);
                 });
             };
+        });
+    });
+    describe('internal streams error control', function(){
+        it('must pass opts',function(done){
+            execToHtml.run('!echo 1').onLine(function(){
+                throw new Error('Unexpected data');
+            }).then(function(){
+                throw new Error('Reject expected');
+            }).catch(function(err){
+                expect(err).to.be.a(Error);
+                expect(err.message).to.match(/option echo is mandatory/);
+                done();
+            }).catch(done);
         });
     });
 });
