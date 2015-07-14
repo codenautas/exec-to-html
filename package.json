@@ -27,5 +27,18 @@
     "test-ci": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec --check-leaks test/",
     "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot --check-leaks test/",
     "start": "node example/server.js"
+  },
+  "jshintConfig": {
+    "asi": false,
+    "curly": true,
+    "forin": true
+  },
+  "codenautas": {
+    "package-version": "0.0.1",
+    "run-in": "server",
+    "test-appveyor": true,
+    "type": "lib",
+    "stage": "designing",
+    "coverage": 80
   }
 }

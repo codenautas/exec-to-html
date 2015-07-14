@@ -88,11 +88,11 @@ execToHtml.run = function run(commandLines, opts){
                     remainSignals = remainSignals & ~bitmask;
                     if(remainSignals) return;
                     if(executer.buffer && executer.buffer.length) {
-                        flush({text:executer.buffer, origin: executer.origin});
+                        flush({origin: executer.origin, text:executer.buffer});
                     }
                     //console.log("event", eventNameForEnd, "result", result, "executer", executer.buffer);
                     if(opts[eventNameForEnd]){
-                        flush({text:result.toString(), origin:eventNameForEnd});
+                        flush({origin:eventNameForEnd, text:result.toString()});
                     }
                     if(!commandLines.length){
                         endFunctions[eventNameForEnd](result);
@@ -112,7 +112,7 @@ execToHtml.run = function run(commandLines, opts){
                         }
                         var rData = opts.encoding?iconv.decode(data,opts.encoding):data.toString();
                         if(! opts.buffering) {
-                            flush({ text:rData, origin:streamName });
+                            flush({origin:streamName,  text:rData});
                         } else {
                             if(!executer.buffer) { 
                                 executer.buffer = '';
@@ -121,7 +121,7 @@ execToHtml.run = function run(commandLines, opts){
                             if(streamName != executer.origin && executer.buffer.length) {
                                 var buffer = executer.buffer;
                                 executer.buffer = '';
-                                flush({ text:buffer, origin:executer.origin });
+                                flush({origin:executer.origin, text:buffer});
                                 executer.origin = streamName;
                             }
                             executer.buffer += rData;
@@ -129,14 +129,14 @@ execToHtml.run = function run(commandLines, opts){
                                 var buffers = executer.buffer.split(os.EOL);
                                 var i=0;
                                 for( ; i<buffers.length-1; ++i) {
-                                    flush({ text:buffers[i]+os.EOL, origin:streamName });
+                                    flush({origin:streamName,  text:buffers[i]+os.EOL});
                                 }
                                 executer.buffer = buffers[i];
                             }
                             if(executer.buffer.substring(executer.buffer.length-os.EOL.length) == os.EOL) {
                                 var buffer = executer.buffer;
                                 executer.buffer = '';
-                                flush({ text:buffer, origin:streamName });
+                                flush({origin:streamName,  text:buffer});
                             }
                         }
                     });
