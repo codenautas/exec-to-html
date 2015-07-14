@@ -92,10 +92,10 @@ execToHtml.run = function run(commandLines, opts){
                     }
                     //console.log("event", eventNameForEnd, "result", result, "executer", executer.buffer);
                     if(opts[eventNameForEnd]){
-                        flush({origin:eventNameForEnd, text:result.toString()});
+                        flush({origin:eventNameForEnd, text:resultForEnd.toString()});
                     }
                     if(!commandLines.length){
-                        endFunctions[eventNameForEnd](result);
+                        endFunctions[eventNameForEnd](resultForEnd);
                     }else{
                         streamer(resolve,reject);
                     }
