@@ -29,14 +29,12 @@ describe('exec-to-html', function(){
     describe('internal streams', function(){
         it('first simple test', function(done){
             var lineCount=0;
+            var obtainedLines=[];
             execToHtml.run('!echo hi5',{echo:false}).onLine(function(lineInfo){
-                if(lineCount) done(new Error('many lines in first test'));
-                lineCount++;
-                expect(lineInfo.text).to.be('hi5'+os.EOL);
-                expect(lineInfo.origin).to.be('stdout');
+                obtainedLines.push(lineInfo);
             }).then(function(exitCode){
+                expect(obtainedLines).to.eql([{text:'hi5'+os.EOL, origin:'stdout'}]);
                 expect(exitCode).to.be(0);
-                expect(lineCount).to.be(1);
                 done();
             }).catch(done);
         });
@@ -48,13 +46,13 @@ describe('exec-to-html', function(){
                     this.timeout(5000);
                 }
                 var expectedLines=fixture.expected.slice(0);
+                var obtainedLines=[];
                 execToHtml.run(fixture.commands,fixture.opts).onLine(function(lineInfo){
                     // console.log('expect(',lineInfo,expectedLines.shift()); return;
-                    if(!expectedLines.length) done(new Error('many lines in first test'));
-                    expect(lineInfo).to.eql(expectedLines.shift());
+                    obtainedLines.push(lineInfo);
                 }).then(function(exitCode){
                     expect(exitCode).to.be(0);
-                    expect(expectedLines.length).to.be(0);
+                    expect(obtainedLines).to.eql(fixture.expected);
                     done();
                 }).catch(done);
             });
