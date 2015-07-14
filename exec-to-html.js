@@ -11,6 +11,10 @@ var spawn = require("child_process").spawn;
 var iconv = require('iconv-lite');
 var os = require('os');
 
+var IDX_STDOUT = 1;
+var IDX_STDERR = 2;
+var BITMASK_END = 4;
+
 var path = require('path');
 
 var winOS = path.sep==='\\';
@@ -73,16 +77,23 @@ execToHtml.run = function run(commandLines, opts){
                     flush(lineForEmit);
                 }
                 var endFunctions={exit:resolve, error:reject};
-                var finalizer=function(result, eventName){
+                var remainSignals=IDX_STDOUT | IDX_STDERR | BITMASK_END;
+                var eventNameForEnd = null;
+                var resultForEnd = null;
+                var finalizer=function(bitmask, result, eventName){
+                    eventNameForEnd = eventName || eventNameForEnd;
+                    resultForEnd = result || resultForEnd;
+                    remainSignals = remainSignals & ~bitmask;
+                    if(remainSignals) return;
                     if(executer.buffer && executer.buffer.length) {
                         flush({text:executer.buffer, origin: executer.origin});
                     }
-                    //console.log("event", eventName, "result", result, "executer", executer.buffer);
-                    if(opts[eventName]){
-                        flush({text:result.toString(), origin:eventName});
+                    //console.log("event", eventNameForEnd, "result", result, "executer", executer.buffer);
+                    if(opts[eventNameForEnd]){
+                        flush({text:result.toString(), origin:eventNameForEnd});
                     }
                     if(!commandLines.length){
-                        endFunctions[eventName](result);
+                        endFunctions[eventNameForEnd](result);
                     }else{
                         streamer(resolve,reject);
                     }
@@ -97,7 +108,6 @@ execToHtml.run = function run(commandLines, opts){
                             });
                             console.log('saliendo',opts.encoding?iconv.decode(data,opts.encoding):data.toString());
                         }
-                        
                         var rData = opts.encoding?iconv.decode(data,opts.encoding):data.toString();
                         if(! opts.buffering) {
                             flush({ text:rData, origin:streamName });
@@ -128,10 +138,13 @@ execToHtml.run = function run(commandLines, opts){
                             }
                         }
                     });
+                    executer.stdio[streamIndex].on('end', function(){
+                        finalizer(streamIndex);
+                    });
                 });
                 _.forEach(endFunctions,function(endFunction, eventName){
                     executer.on(eventName, function(result){
-                        finalizer(result,eventName);
+                        finalizer(BITMASK_END,result,eventName);
                     });
                 });
             };
