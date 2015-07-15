@@ -96,7 +96,6 @@ execToHtml.run = function run(commandLines, opts){
                     if(executer.buffer && executer.buffer.length) {
                         flush({origin: executer.origin, text:executer.buffer});
                     }
-                    //console.log("event", eventNameForEnd, "result", result, "executer", executer.buffer);
                     if(opts[eventNameForEnd]){
                         flush({origin:eventNameForEnd, text:resultForEnd.toString()});
                     }

@@ -4,6 +4,7 @@ var _ = require('lodash');
 var os = require('os');
 var path = require('path');
 var winOS = path.sep==='\\';
+var semver = require('semver');
 
 var fixtures={
     'list of builtin commands':{
@@ -229,8 +230,10 @@ if(/fixtures\.js$/.test(process.argv[1])){
         });
     }
     if(fixture.exit){
-        if(process.version<='v0.12'){
-            process.exit(fixture.exit);
+        if(semver.lt(process.version.substr(1),'0.12.0')){
+            setTimeout(function(){
+                process.exit(fixture.exit);
+            },(fixture.delay*2||0)+100);
         }else{
             process.exitCode=fixture.exit;
         }
