@@ -147,13 +147,12 @@ var fixtures={
         commands:[{
             command:winOS?'dir/b':'ls',
             shell:true,
-            params:['texte*']
+            params:[winOS?'texte*':'texte français.txt']
         }],
-        opts:{echo:false, cwd:'./test', encoding:winOS?'cp437':''},
+        opts:{echo:false, cwd:'./test', encoding:winOS?'cp437':'utf8'},
         expected:[
             {origin:'stdout', text:'texte français.txt'+os.EOL}
-        ],
-        skipped:!winOS
+        ]
     },
     'extended-filename':{
         commands:[{
@@ -161,12 +160,11 @@ var fixtures={
             shell:true,
             params:['texte français.txt']
         }],
-        opts:{echo:true, cwd:'./test', encoding:winOS?'cp437':''},
+        opts:{echo:true, cwd:'./test', encoding:winOS?'cp437':'utf8'},
         expected:[
             {origin:'shell', text:(winOS?'dir/b':'ls')+' "texte français.txt"'},
             {origin:'stdout', text:'texte français.txt'+os.EOL}
-        ],
-        skipped:!winOS
+        ]
     },
     'encoding-ansi':{
         commands:[{
