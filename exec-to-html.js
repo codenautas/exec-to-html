@@ -11,9 +11,9 @@ var spawn = require("child_process").spawn;
 var iconv = require('iconv-lite');
 var os = require('os');
 
-var IDX_STDOUT = 1;
-var IDX_STDERR = 2;
-var BITMASK_END = 4;
+var IDX_STDOUT  = 1;// 001
+var IDX_STDERR  = 2;// 010
+var BITMASK_END = 4;// 100
 
 var path = require('path');
 
@@ -34,6 +34,9 @@ execToHtml.run = function run(commandLines, opts){
     }
     if(!('buffering' in opts)) {
         opts.buffering = true;
+    }
+    if(!('error' in opts)) {
+        opts.error = true;
     }
     if(typeof commandLines==='string'){
         commandLines=[commandLines];
@@ -90,8 +93,11 @@ execToHtml.run = function run(commandLines, opts){
                 if(opts.echo){
                     flush(lineForEmit);
                 }
-                var endFunctions={exit:resolve, error:reject};
                 var remainSignals=IDX_STDOUT | IDX_STDERR | BITMASK_END;
+                var endFunctions={
+                    exit: {resolveOrReject:resolve, flags:BITMASK_END  }, 
+                    error:{resolveOrReject:opts.throwError?reject:resolve , flags:remainSignals}
+                };
                 var eventNameForEnd = null;
                 var resultForEnd = null;
                 var finalizer=function(bitmask, result, eventName){
@@ -105,10 +111,13 @@ execToHtml.run = function run(commandLines, opts){
                         flush({origin: executer.origin, text:executer.buffer});
                     }
                     if(opts[eventNameForEnd]){
+                        if(resultForEnd==null){
+                            resultForEnd='empty result';
+                        }
                         flush({origin:eventNameForEnd, text:resultForEnd.toString()});
                     }
                     if(!commandLines.length){
-                        endFunctions[eventNameForEnd](resultForEnd);
+                        endFunctions[eventNameForEnd].resolveOrReject(resultForEnd);
                     }else{
                         streamer(resolve,reject);
                     }
@@ -154,9 +163,9 @@ execToHtml.run = function run(commandLines, opts){
                         finalizer(streamIndex);
                     });
                 });
-                _.forEach(endFunctions,function(endFunction, eventName){
+                _.forEach(endFunctions,function(infoEvent, eventName){
                     executer.on(eventName, function(result){
-                        finalizer(BITMASK_END,result,eventName);
+                        finalizer(infoEvent.flags,result,eventName);
                     });
                 });
             };

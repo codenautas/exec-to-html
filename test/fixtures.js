@@ -7,6 +7,15 @@ var winOS = path.sep==='\\';
 var semver = require('semver');
 
 var fixtures={
+    'command-ENOENT':{
+        commands:['aenoentcmd parameter1 parameter2'],
+        opts:{echo:true},
+        expected:[
+            {origin:'command', text:'aenoentcmd parameter1 parameter2'},
+            {origin:'error', text:'Error: spawn ENOENT'}
+        ],
+        exit:{"code":"ENOENT","errno":"ENOENT","syscall":"spawn"}
+    },
     'list of builtin commands':{
         commands:['!echo hi5','!echo two','!echo last'],
         opts:{echo:true},
@@ -84,7 +93,8 @@ var fixtures={
         ],
         splitter:' ', //yes one space!
         delay:100,
-        opts:{echo:false}
+        opts:{echo:false},
+        timeout:4000
     },
     'err-within-outline-no-buffer-big':{
         expected:[
@@ -205,6 +215,31 @@ var fixtures={
             {origin:'shell', text:(winOS?'type':'cat')+' utf8-text.txt'},
             {origin:'stdout', text:'français in UTF8'}
         ],
+    },
+    'npm-prefix':{
+        commands:['npm prefix'],
+        opts:{echo:true},
+        expected:[
+            {origin:'command', text:'npm prefix'},
+            {origin:'stdout', text:process.cwd()+'\n'}
+        ]
+    },
+    'npm-prune':{
+        /*
+        commands:[{
+            command:'npm',
+            params:['prune']
+        }],
+        */
+        // commands:['npm prune --verbose'],
+        commands:['npm -v'],
+        opts:{echo:true},
+        expected:[
+            {origin:'command', text:'npm prune'},
+            {origin:'stdout', text:'npm info it worked if it ends with ok'}
+        ],
+        slice:[0,2],
+        timeout:10000
     }
 };
 

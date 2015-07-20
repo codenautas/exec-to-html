@@ -38,20 +38,27 @@ describe('exec-to-html', function(){
                 done();
             }).catch(done);
         });
-        _.forEach(_.filter(fixtures,function(fixture){ return !fixture.skipped; }),function(fixture){
+        _.forEach(fixtures,function(fixture){
+            if(fixture.skipped){
+                it.skip('run fixture with stream. For fixutreName='+fixture.name+', skipped:'+fixture.skipped,function(){
+                });
+                return;
+            }
             it('run fixture with stream. For fixutreName='+fixture.name,function(done){
-                if(process.env.APPVEYOR){
-                    this.timeout(9000);
-                }else{
-                    this.timeout(5000);
+                if(fixture.timeout){
+                    this.timeout(fixture.timeout*(process.env.APPVEYOR?3:1));
                 }
-                var expectedLines=fixture.expected.slice(0);
+                if(fixture.slice){
+                    var expectedLines=fixture.expected.slice(fixture.slice[0],fixture.slice[1]);
+                }else{
+                    var expectedLines=fixture.expected.slice(0);
+                }
                 var obtainedLines=[];
                 execToHtml.run(fixture.commands,fixture.opts).onLine(function(lineInfo){
                     // console.log('expect(',lineInfo,expectedLines.shift()); return;
                     obtainedLines.push(lineInfo);
                 }).then(function(exitCode){
-                    expect(exitCode).to.be(fixture.exit||0);
+                    expect(exitCode).to.eql(fixture.exit||0);
                     expect(obtainedLines).to.eql(fixture.expected);
                     done();
                 }).catch(done);
