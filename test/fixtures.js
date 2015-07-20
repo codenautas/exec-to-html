@@ -147,7 +147,7 @@ var fixtures={
         commands:[{
             command:winOS?'dir/b':'ls',
             shell:true,
-            params:[winOS?'texte*':'texte français.txt']
+            params:['texte*']
         }],
         opts:{echo:false, cwd:'./test', encoding:winOS?'cp437':'utf8'},
         expected:[

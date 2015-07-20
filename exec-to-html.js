@@ -71,6 +71,14 @@ execToHtml.run = function run(commandLines, opts){
                         commandInfo.params.unshift(commandInfo.command);
                         commandInfo.params.unshift('/c');
                         commandInfo.command='cmd.exe';
+                    } else {
+                        // Ponemos comillas si hay espacios en el nombre
+                        commandInfo.params = _.map(commandInfo.params, function(e) {
+                            return (e.match(/ /)) ? '"' + e + '"' : e;
+                        });
+                        commandInfo.params = [commandInfo.command+' '+ commandInfo.params.join(' ')];
+                        commandInfo.params.unshift('-c');
+                        commandInfo.command='sh';
                     }
                 }else{
                     lineForEmit.origin='command';
