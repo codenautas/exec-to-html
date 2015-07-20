@@ -58,6 +58,22 @@ var fixtures={
         ],
         opts:{echo:false},
     },
+    'mixed-EOL':{
+        messages:[
+            {origin:'stdout', text:'first line\n'+
+                                   'second line\r\n'+
+                                   'third line\r'+
+                                   'fourth line'}
+        ],
+        expected:[
+            {origin:'stdout', text:'first line\n'},
+            {origin:'stdout', text:'second line\r\n'},
+            {origin:'stdout', text:'third line\r'},
+            {origin:'stdout', text:'fourth line'},
+        ],
+        opts:{echo:false},
+        skipped:'#11',
+    },
     'err-within-outline':{
         expected:[
             {origin:'stdout', text:'first line'+os.EOL},

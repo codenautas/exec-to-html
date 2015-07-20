@@ -18,7 +18,7 @@ window.addEventListener('load', function(){
             eid('result').className='res_ok';
         }).catch(function(err){
             result_err.textContent=err.message;
-            result_err.textContent+='\n<br>\n'+err.stack;
+            result_err.textContent+='\n'+err.stack;
         });
     }
 });
