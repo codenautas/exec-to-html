@@ -77,6 +77,7 @@ execToHtml.run = function run(commandLines, opts){
                             return (e.match(/ /)) ? '"' + e + '"' : e;
                         });
                         commandInfo.params = [commandInfo.command+' '+ commandInfo.params.join(' ')];
+                        commandInfo.params.unshift('-c');
                         commandInfo.command='sh';
                     }
                 }else{
