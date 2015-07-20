@@ -1,0 +1,16 @@
+﻿doctype html
+html(lang="es")
+  head
+    title Exec-to-html example
+    link(href="example.css", rel="stylesheet", type="text/css")
+  body
+    h1 Exec-to-html example
+    div
+      label project name to update:
+      input#project(value='dir-info')
+      button#start <big><b>U</b></big>pdate
+    #result
+    #result_err.err_no_esp
+    script(src='ajax-best-promise.js')
+    script(src='example.js')
+      
