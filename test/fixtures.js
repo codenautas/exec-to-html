@@ -17,7 +17,7 @@ var fixtures={
         exit:{"code":"ENOENT","errno":"ENOENT","syscall":"spawn"}
     },
     'list of builtin commands':{
-        commands:['!echo hi5','!echo two','!echo last'],
+        commands:['echo hi5','!echo two','!echo last'],
         opts:{echo:true},
         expected:[
             {origin:'shell', text:'echo hi5'},
@@ -182,13 +182,13 @@ var fixtures={
     },
     'extended-filename':{
         commands:[{
-            command:winOS?'dir/b':'ls',
-            shell:true,
+            command:'ls',
             params:['texte français.txt']
         }],
         opts:{echo:true, cwd:'./test', encoding:winOS?'cp437':'utf8'},
         expected:[
-            {origin:'shell', text:(winOS?'dir/b':'ls')+' "texte français.txt"'},
+            (winOS?{origin:'shell', text:'ls "texte français.txt"', realCommand:'dir/b'}
+                  :{origin:'shell', text:'ls "texte français.txt"'}),
             {origin:'stdout', text:'texte français.txt'+os.EOL}
         ]
     },
@@ -220,26 +220,22 @@ var fixtures={
         commands:['npm prefix'],
         opts:{echo:true},
         expected:[
-            {origin:'command', text:'npm prefix'},
+            {origin:'shell', text:'npm prefix'},
             {origin:'stdout', text:process.cwd()+'\n'}
         ]
     },
     'npm-prune':{
-        /*
         commands:[{
             command:'npm',
-            params:['prune']
+            params:['prune','--verbose']
         }],
-        */
-        // commands:['npm prune --verbose'],
-        commands:['npm -v'],
         opts:{echo:true},
         expected:[
-            {origin:'command', text:'npm prune'},
+            {origin:'shell', text:'npm prune --verbose'},
             {origin:'stdout', text:'npm info it worked if it ends with ok'}
         ],
         slice:[0,2],
-        timeout:10000
+        skipped:"#11"
     }
 };
 

@@ -58,8 +58,8 @@ describe('exec-to-html', function(){
                     // console.log('expect(',lineInfo,expectedLines.shift()); return;
                     obtainedLines.push(lineInfo);
                 }).then(function(exitCode){
-                    expect(exitCode).to.eql(fixture.exit||0);
                     expect(obtainedLines).to.eql(fixture.expected);
+                    expect(exitCode).to.eql(fixture.exit||0);
                     done();
                 }).catch(done);
             });

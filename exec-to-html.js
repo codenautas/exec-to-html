@@ -28,6 +28,12 @@ function specialReject(message){
     };
 }
 
+execToHtml.commands={
+    'npm':{shell:true},
+    'ls':{shell:true, win:'dir/b'},
+    'echo':{shell:true},
+};
+
 execToHtml.run = function run(commandLines, opts){
     if(!opts || !('echo' in opts)){
         return specialReject('execToHtml.run ERROR: option echo is mandatory');
@@ -49,8 +55,8 @@ execToHtml.run = function run(commandLines, opts){
                 var lineForEmit={};
                 if(typeof commandLine === 'string'){
                     var commandInfo={};
-                    commandInfo.shell=commandLine[0]==='!';
-                    if(commandInfo.shell){
+                    if(commandLine[0]==='!'){
+                        commandInfo.shell=true;
                         commandLine=commandLine.substr(1);
                     }
                     commandInfo.params=commandLine.split(' ');
@@ -65,6 +71,16 @@ execToHtml.run = function run(commandLines, opts){
                         }
                         return param;
                     })).join(' ');
+                }
+                if(!('shell' in commandInfo)){
+                    var infoCommand=execToHtml.commands[commandInfo.command];
+                    if(infoCommand){
+                        commandInfo.shell=!!infoCommand.shell;
+                        if(winOS && infoCommand.win){
+                            commandInfo.command=infoCommand.win;
+                            lineForEmit.realCommand=infoCommand.win;
+                        }
+                    }
                 }
                 if(commandInfo.shell){ 
                     lineForEmit.origin='shell';
