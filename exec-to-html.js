@@ -79,6 +79,7 @@ execToHtml.run = function run(commandLines, opts){
                         });
                         commandInfo.params = [commandInfo.command+' '+ commandInfo.params.join(' ')];
                         */
+                        commandInfo.params.unshift(commandInfo.command);
                         commandInfo.params.unshift('-c');
                         commandInfo.command='sh';
                     }
