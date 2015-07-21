@@ -14,7 +14,6 @@ var os = require('os');
 describe('exec-to-html', function(){
     describe('internal streams', function(){
         it('first simple test', function(done){
-            var lineCount=0;
             var obtainedLines=[];
             execToHtml.run('!echo hi5',{echo:false}).onLine(function(lineInfo){
                 obtainedLines.push(lineInfo);
@@ -35,6 +34,19 @@ describe('exec-to-html', function(){
             execToHtml.addLocalCommands(execToHtml.commands).then(function(commands) {
                 expect(commands).to.eql(expCmds);
                 //console.log("commands", commands); console.log("expCmds", expCmds);
+                process.chdir(here);
+                done();
+            }).catch(done);
+        });
+        it('could run commands from a local-config.yaml (#14)', function(done){
+            var obtainedLines=[];
+            var here=process.cwd();
+            process.chdir('./test');
+            execToHtml.run('listar fixtures.js',{echo:false, shell:true}).onLine(function(lineInfo){
+                obtainedLines.push(lineInfo);
+            }).then(function(exitCode){
+                expect(obtainedLines).to.eql([{origin:'stdout', text:'fixtures.js'+os.EOL}]);
+                expect(exitCode).to.be(0);
                 process.chdir(here);
                 done();
             }).catch(done);

@@ -49,7 +49,6 @@ execToHtml.addLocalCommands = function addLocalCommands(existingCommands) {
             var cmd;
             for(cmd in cmds) {
                 existingCommands[cmd] = cmds[cmd];
-                //console.log("cmd", cmd, ":", cmds[cmd]); 
             }
         }
         return existingCommands;
@@ -71,6 +70,9 @@ execToHtml.run = function run(commandLines, opts){
     }
     var runner={
         onLine:function(flush){
+            return Promises.start(function() {
+                return execToHtml.addLocalCommands(execToHtml.commands);
+            }).then(function() {
             var streamer=function(resolve,reject){
                 var commandLine=commandLines[0];
                 commandLines=commandLines.slice(1);
@@ -101,6 +103,9 @@ execToHtml.run = function run(commandLines, opts){
                         if(winOS && infoCommand.win){
                             commandInfo.command=infoCommand.win;
                             lineForEmit.realCommand=infoCommand.win;
+                        } else if(infoCommand.unix) {
+                            commandInfo.command=infoCommand.unix;
+                            lineForEmit.realCommand=infoCommand.unix;
                         }
                     }
                 }
@@ -209,6 +214,7 @@ execToHtml.run = function run(commandLines, opts){
                 });
             };
             return new Promises.Promise(streamer);
+            });
         }
     };
     if(opts.collect){
