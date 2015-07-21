@@ -16,8 +16,11 @@ var fixtures={
             {origin:'command', text:'aenoentcmd parameter1 parameter2'},
             {origin:'error', text:'Error: spawn '+(winOS || semver.lt(process.version.substr(1),'0.11.0')?'':'aenoentcmd ')+'ENOENT'}
         ],
-        exit:{"code":"ENOENT","errno":"ENOENT","syscall":"spawn aenoentcmd","path":"aenoentcmd"},
-        skipped: winOS && "Dejó de funcionar en windows"
+        exit:(
+            semver.lt(process.version.substr(1),'0.11.0')?
+            {"code":"ENOENT","errno":"ENOENT","syscall":"spawn"}:
+            {"code":"ENOENT","errno":"ENOENT","syscall":"spawn aenoentcmd","path":"aenoentcmd"}
+        )
     },
     'controled-colored':{
         opts:{echo:false},
