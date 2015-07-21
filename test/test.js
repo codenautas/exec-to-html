@@ -63,6 +63,7 @@ describe('exec-to-html', function(){
                     }
                     //console.log("OL", obtainedLines); console.log("EX", fixture.expected);
                     expect(obtainedLines).to.eql(fixture.expected);
+                    //console.log("exitCode",exitCode);
                     expect(exitCode).to.eql(fixture.exit||0);
                     done();
                 }).catch(done);

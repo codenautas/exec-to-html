@@ -228,11 +228,7 @@ execToHtml.run = function run(commandLines, opts){
             }
             result[lineInfo.origin]+=lineInfo.text;
         }).then(function(exit){
-            //console.log("exit", exit);
-            if(exit){
-                result.exit=exit;
-            }
-            //console.log("result", result);
+            if(exit){ result.exit=exit; }
             return result;
         });
     }
