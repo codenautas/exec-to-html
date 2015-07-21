@@ -3,8 +3,11 @@
 var _ = require('lodash');
 var os = require('os');
 var path = require('path');
-var winOS = path.sep==='\\';
 var semver = require('semver');
+//var winOS = path.sep==='\\';
+var winOS = /^win/.test(process.platform);
+var macOS = /darwin/.test(process.platform);
+var unixOS = !winOS && !macOS;
 
 var fixtures={
     'command-ENOENT':{
@@ -51,7 +54,7 @@ var fixtures={
     },
     'char-by-char':{
         expected:[
-            {origin:'stdout', text:'slow'+os.EOL},
+            {origin:'stdout', text:'slow'+(winOS || macOS?'\r':'\n')},
         ],
         opts:{echo:false},
         splitter:'',
@@ -222,7 +225,8 @@ var fixtures={
         expected:[
             {origin:'shell', text:'npm prefix'},
             {origin:'stdout', text:process.cwd()+'\n'}
-        ]
+        ],
+        timeout:5000
     },
     'npm-prune':{
         commands:[{
@@ -232,7 +236,7 @@ var fixtures={
         opts:{echo:true},
         expected:[
             {origin:'shell', text:'npm prune --verbose'},
-            {origin:winOS?'stdout':'stderr', text:'npm info it worked if it ends with ok'+os.EOL}
+            {origin:'stderr', text:'npm info it worked if it ends with ok\n'}
         ],
         slice:[0,2],
         timeout:5000/*,

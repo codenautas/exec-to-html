@@ -184,7 +184,6 @@ execToHtml.run = function run(commandLines, opts){
                             if(streamName != executer.origin && executer.buffer.length) {
                                 var buffer = executer.buffer;
                                 executer.buffer = '';
-                                //console.log("cambio de origin");
                                 flush({origin:executer.origin, text:buffer});
                                 executer.origin = streamName;
                             }
