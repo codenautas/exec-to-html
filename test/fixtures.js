@@ -14,7 +14,7 @@ var fixtures={
         opts:{echo:true},
         expected:[
             {origin:'command', text:'aenoentcmd parameter1 parameter2'},
-            {origin:'error', text:'Error: spawn '+(winOS || semver.lt(process.version.substr(1),'0.11.0')?'':'aenoentcmd ')+'ENOENT'}
+            {origin:'error', text:'Error: spawn '+(semver.lt(process.version.substr(1),'0.11.0')?'':'aenoentcmd ')+'ENOENT'}
         ],
         exit:(
             semver.lt(process.version.substr(1),'0.11.0')?
