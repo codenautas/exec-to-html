@@ -5,6 +5,8 @@ var os = require('os');
 var path = require('path');
 var winOS = path.sep==='\\';
 var semver = require('semver');
+var colors = require('colors');
+colors.enabled = true;
 
 var fixtures={
     'command-ENOENT':{
@@ -15,6 +17,26 @@ var fixtures={
             {origin:'error', text:'Error: spawn ENOENT'}
         ],
         exit:{"code":"ENOENT","errno":"ENOENT","syscall":"spawn"}
+    },
+    'controled-colored':{
+        opts:{echo:false},
+        expected:[
+            {origin:'stdout', text:'red'.red+' '+
+                                   'is not'.underline+' '+
+                                   'good for background'.bgYellow+' '+
+                                   'Bold yes'.bold.italic.green+os.EOL}
+        ]
+    },
+    'npm-colored':{
+        commands:['npm prefix --verbose --color=always'],
+        opts:{echo:true},
+        expected:[
+            {origin:'shell', text:'npm prefix --verbose --color=always'},
+            {origin:'stderr', text:'npm'.white},
+            {origin:'stdout', text:process.cwd()+'\n'},
+            {origin:'stderr', text:' info'.green+' it worked if it ends with'.magenta+' ok\n'}
+        ],
+        slice:[0,3]
     },
     'list of builtin commands':{
         commands:['echo hi5','!echo two','!echo last'],

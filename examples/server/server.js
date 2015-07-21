@@ -113,7 +113,7 @@ app.get('/install',function(req,res){
         if(req.xhr){
             console.log('ajax request detected');
             res.append('Content-Type', 'application/octet-stream'); // por chrome bug segun: http://stackoverflow.com/questions/3880381/xmlhttprequest-responsetext-while-loading-readystate-3-in-chrome
-            }
+        }
         res.write('Initializing commands');
         return execToHtml.run([
             'git pull',
