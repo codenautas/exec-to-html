@@ -16,7 +16,8 @@ var fixtures={
             {origin:'command', text:'aenoentcmd parameter1 parameter2'},
             {origin:'error', text:'Error: spawn ENOENT'}
         ],
-        exit:{"code":"ENOENT","errno":"ENOENT","syscall":"spawn"}
+        exit:{"code":"ENOENT","errno":"ENOENT","syscall":"spawn"},
+        skipped:"Win/Linux reaccionan redicalmente diferente" && !winOS
     },
     'controled-colored':{
         opts:{echo:false},
@@ -77,7 +78,8 @@ var fixtures={
         ],
         opts:{echo:false},
         splitter:'',
-        delay:100
+        delay:100,
+        skipped:winOS && 'Problema detectando separado CR y LF'
     },
     'double-line':{
         messages:[
@@ -103,8 +105,7 @@ var fixtures={
             {origin:'stdout', text:'third line\r'},
             {origin:'stdout', text:'fourth line'},
         ],
-        opts:{echo:false},
-        skipped:'#11',
+        opts:{echo:false}
     },
     'err-within-outline':{
         expected:[
@@ -245,7 +246,8 @@ var fixtures={
         expected:[
             {origin:'shell', text:'npm prefix'},
             {origin:'stdout', text:process.cwd()+'\n'}
-        ]
+        ],
+        timeout:5000
     },
     'npm-prune':{
         commands:[{
@@ -255,10 +257,11 @@ var fixtures={
         opts:{echo:true},
         expected:[
             {origin:'shell', text:'npm prune --verbose'},
-            {origin:'stdout', text:'npm info it worked if it ends with ok'}
+            {origin:'stderr', text:'npm info it worked if it ends with ok\n'}
         ],
         slice:[0,2],
-        skipped:"#11"
+        timeout:5000/*,
+        skipped:"#11"*/
     }
 };
 
