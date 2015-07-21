@@ -4,7 +4,7 @@ var _ = require('lodash');
 var stream = require('stream');
 var expect = require('expect.js');
 var execToHtml = require('..');
-
+var Path = require('path');
 var fixtures = require('./fixtures.js');
 
 var stream = require('stream');
@@ -21,6 +21,21 @@ describe('exec-to-html', function(){
             }).then(function(exitCode){
                 expect(obtainedLines).to.eql([{origin:'stdout', text:'hi5'+os.EOL}]);
                 expect(exitCode).to.be(0);
+                done();
+            }).catch(done);
+        });
+        it('should register commands from a local-config.yaml (#14)', function(done){
+            var here=process.cwd();
+            process.chdir('./test');
+            var expCmds =  _.cloneDeep(execToHtml.commands);
+            expCmds['diskspace'] = {
+               win: 'dir|find "dirs"', unix: 'df -h --total | grep total', shell: true
+            };
+            expCmds['listar'] = { win: 'dir', unix: 'ls' };
+            execToHtml.addLocalCommands(execToHtml.commands).then(function(commands) {
+                expect(commands).to.eql(expCmds);
+                //console.log("commands", commands); console.log("expCmds", expCmds);
+                process.chdir(here);
                 done();
             }).catch(done);
         });

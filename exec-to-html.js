@@ -10,6 +10,8 @@ var Promises = require('best-promise');
 var spawn = require("child_process").spawn;
 var iconv = require('iconv-lite');
 var os = require('os');
+var fs = require('fs-promise');
+var readYaml = require('read-yaml-promise');
 
 var IDX_STDOUT  = 1;// 001
 var IDX_STDERR  = 2;// 010
@@ -33,6 +35,26 @@ execToHtml.commands={
     'ls':{shell:true, win:'dir/b'},
     'echo':{shell:true},
 };
+
+execToHtml.addLocalCommands = function addLocalCommands(existingCommands) {
+    var localyaml='./local-config.yaml';
+    return Promises.start(function() {
+        return fs.exists(localyaml);
+    }).then(function(existsYAML) {
+        if(existsYAML) { return readYaml(localyaml); }
+        return false;
+    }).then(function(yamlconf){
+        var cmds=yamlconf['commands'];
+        if(cmds) {
+            var cmd;
+            for(cmd in cmds) {
+                existingCommands[cmd] = cmds[cmd];
+                //console.log("cmd", cmd, ":", cmds[cmd]); 
+            }
+        }
+        return existingCommands;
+    });
+}
 
 execToHtml.run = function run(commandLines, opts){
     if(!opts || !('echo' in opts)){
@@ -188,7 +210,7 @@ execToHtml.run = function run(commandLines, opts){
             };
             return new Promises.Promise(streamer);
         }
-    }
+    };
     if(opts.collect){
         var result={};
         return runner.onLine(function(lineInfo){
