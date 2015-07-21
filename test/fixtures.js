@@ -14,9 +14,10 @@ var fixtures={
         opts:{echo:true},
         expected:[
             {origin:'command', text:'aenoentcmd parameter1 parameter2'},
-            {origin:'error', text:'Error: spawn aenoentcmd ENOENT'}
+            {origin:'error', text:'Error: spawn '+(winOS?'':'aenoentcmd ')+'ENOENT'}
         ],
-        exit:{"code":"ENOENT","errno":"ENOENT","syscall":"spawn aenoentcmd","path":"aenoentcmd"}
+        exit:{"code":"ENOENT","errno":"ENOENT","syscall":"spawn aenoentcmd","path":"aenoentcmd"},
+        skipped: winOS && "Dejó de funcionar en windows"
     },
     'controled-colored':{
         opts:{echo:false},
