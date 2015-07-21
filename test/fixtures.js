@@ -36,7 +36,8 @@ var fixtures={
             {origin:'stdout', text:process.cwd()+'\n'},
             {origin:'stderr', text:' info'.green+' it worked if it ends with'.magenta+' ok\n'}
         ],
-        slice:[0,3]
+        slice:[0,3],
+        skipped:true
     },
     'list of builtin commands':{
         commands:['echo hi5','!echo two','!echo last'],
