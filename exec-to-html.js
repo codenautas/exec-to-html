@@ -166,22 +166,13 @@ execToHtml.run = function run(commandLines, opts){
                                 executer.origin = streamName;
                             }
                             executer.buffer += rData;
-                            var re = /(.*)(\r\n|\r|\n)/gm;
-                            var match = null;
-                            var buffers = [];
-                            while (match = re.exec(executer.buffer)) {
-                                buffers.push(match[0]);
-                            }
-                            if(buffers.length) {
-                                var lenSoFar = 0;
-                                for(var i=0; i<buffers.length; ++i) {
-                                    flush({origin:streamName,  text:buffers[i]});
-                                    lenSoFar += buffers[i].length;
-                                }if(executer.buffer.length > lenSoFar) {
-                                    executer.buffer = executer.buffer.substring(lenSoFar); 
-                                } else {
-                                    executer.buffer = '';
+                            if(executer.buffer.match(/\r[^\n]|\n/)) {
+                                var buffers = executer.buffer.split(/(\r\n|\r(?!\n)|\n)/);
+                                var i=0;
+                                for( ; i<buffers.length-1; i+=2) {
+                                    flush({origin:streamName,  text:buffers[i]+buffers[i+1]});
                                 }
+                                executer.buffer = buffers[i];
                             }
                         }
                     });
@@ -206,7 +197,9 @@ execToHtml.run = function run(commandLines, opts){
             }
             result[lineInfo.origin]+=lineInfo.text;
         }).then(function(exit){
-            if(exit){ result.exit=exit; }
+            if(exit){ 
+                result.exit=exit; 
+            }
             return result;
         });
     }

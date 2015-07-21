@@ -14,7 +14,7 @@ var fixtures={
         opts:{echo:true},
         expected:[
             {origin:'command', text:'aenoentcmd parameter1 parameter2'},
-            {origin:'error', text:'Error: spawn '+(winOS?'':'aenoentcmd ')+'ENOENT'}
+            {origin:'error', text:'Error: spawn '+(winOS || semver.lt(process.version.substr(1),'0.11.0')?'':'aenoentcmd ')+'ENOENT'}
         ],
         exit:{"code":"ENOENT","errno":"ENOENT","syscall":"spawn aenoentcmd","path":"aenoentcmd"},
         skipped: winOS && "Dejó de funcionar en windows"
@@ -79,7 +79,7 @@ var fixtures={
         opts:{echo:false},
         splitter:'',
         delay:100,
-        skipped:winOS && 'Problema detectando separado CR y LF'
+        skipped:!"arreglado" && winOS && 'Problema detectando separado CR y LF'
     },
     'double-line':{
         messages:[
