@@ -34,11 +34,7 @@ describe('exec-to-html', function(){
                 if(fixture.timeout){
                     this.timeout(fixture.timeout*(process.env.APPVEYOR?3:1));
                 }
-                if(fixture.slice){
-                    var expectedLines=fixture.expected.slice(fixture.slice[0],fixture.slice[1]);
-                }else{
-                    var expectedLines=fixture.expected.slice(0);
-                }
+                var expectedLines=fixture.expected.slice(0);
                 var obtainedLines=[];
                 execToHtml.run(fixture.commands,fixture.opts).onLine(function(lineInfo){
                     // console.log('expect(',lineInfo,expectedLines.shift()); return;
