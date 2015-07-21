@@ -33,7 +33,6 @@ describe('exec-to-html', function(){
             expCmds['listar'] = { win: 'dir/b', unix: 'ls', shell: true };
             execToHtml.addLocalCommands(execToHtml.commands).then(function(commands) {
                 expect(commands).to.eql(expCmds);
-                //console.log("commands", commands); console.log("expCmds", expCmds);
                 process.chdir(here);
                 done();
             }).catch(done);
@@ -64,7 +63,6 @@ describe('exec-to-html', function(){
                 var expectedLines=fixture.expected.slice(0);
                 var obtainedLines=[];
                 execToHtml.run(fixture.commands,fixture.opts).onLine(function(lineInfo){
-                    // console.log('expect(',lineInfo,expectedLines.shift()); return;
                     obtainedLines.push(lineInfo);
                 }).then(function(exitCode){
                     if(fixture.slice) {
