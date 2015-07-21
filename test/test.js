@@ -30,7 +30,7 @@ describe('exec-to-html', function(){
             expCmds['diskspace'] = {
                win: 'dir|find "dirs"', unix: 'df -h --total | grep total', shell: true
             };
-            expCmds['listar'] = { win: 'dir', unix: 'ls' };
+            expCmds['listar'] = { win: 'dir/b', unix: 'ls', shell: true };
             execToHtml.addLocalCommands(execToHtml.commands).then(function(commands) {
                 expect(commands).to.eql(expCmds);
                 //console.log("commands", commands); console.log("expCmds", expCmds);
@@ -42,7 +42,7 @@ describe('exec-to-html', function(){
             var obtainedLines=[];
             var here=process.cwd();
             process.chdir('./test');
-            execToHtml.run('listar fixtures.js',{echo:false, shell:true}).onLine(function(lineInfo){
+            execToHtml.run('listar *fixtures.js',{echo:false}).onLine(function(lineInfo){
                 obtainedLines.push(lineInfo);
             }).then(function(exitCode){
                 expect(obtainedLines).to.eql([{origin:'stdout', text:'fixtures.js'+os.EOL}]);

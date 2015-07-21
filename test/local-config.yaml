@@ -3,4 +3,4 @@ commands:
   diskspace: 
     {win: dir|find "dirs", unix: df -h --total | grep total, shell: True}
   listar:
-    {win: dir, unix: ls}
+    {win: "dir/b", unix: ls, shell: True}

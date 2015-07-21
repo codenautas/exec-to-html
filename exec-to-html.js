@@ -166,6 +166,7 @@ execToHtml.run = function run(commandLines, opts){
                         streamer(resolve,reject);
                     }
                 }
+				//console.log("ci", commandInfo);
                 var executer=spawn(commandInfo.command, commandInfo.params, spawnOpts);
                 _.forEach({stdout:1, stderr:2},function(streamIndex, streamName){
                     executer.stdio[streamIndex].on('data', function(data){
