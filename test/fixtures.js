@@ -14,7 +14,8 @@ var fixtures={
             {origin:'command', text:'aenoentcmd parameter1 parameter2'},
             {origin:'error', text:'Error: spawn ENOENT'}
         ],
-        exit:{"code":"ENOENT","errno":"ENOENT","syscall":"spawn"}
+        exit:{"code":"ENOENT","errno":"ENOENT","syscall":"spawn"},
+        skipped:"Win/Linux reaccionan redicalmente diferente"
     },
     'list of builtin commands':{
         commands:['echo hi5','!echo two','!echo last'],
@@ -80,8 +81,7 @@ var fixtures={
             {origin:'stdout', text:'third line\r'},
             {origin:'stdout', text:'fourth line'},
         ],
-        opts:{echo:false},
-        skipped:'#11',
+        opts:{echo:false}
     },
     'err-within-outline':{
         expected:[
@@ -232,10 +232,11 @@ var fixtures={
         opts:{echo:true},
         expected:[
             {origin:'shell', text:'npm prune --verbose'},
-            {origin:'stdout', text:'npm info it worked if it ends with ok'}
+            {origin:winOS?'stdout':'stderr', text:'npm info it worked if it ends with ok'+os.EOL}
         ],
         slice:[0,2],
-        skipped:"#11"
+        timeout:5000/*,
+        skipped:"#11"*/
     }
 };
 

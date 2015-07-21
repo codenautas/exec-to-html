@@ -33,7 +33,7 @@ describe('exec-to-html', function(){
             execToHtml.run('!echo hi5',{echo:false}).onLine(function(lineInfo){
                 obtainedLines.push(lineInfo);
             }).then(function(exitCode){
-                expect(obtainedLines).to.eql([{text:'hi5'+os.EOL, origin:'stdout'}]);
+                expect(obtainedLines).to.eql([{origin:'stdout', text:'hi5'+os.EOL}]);
                 expect(exitCode).to.be(0);
                 done();
             }).catch(done);
@@ -58,6 +58,10 @@ describe('exec-to-html', function(){
                     // console.log('expect(',lineInfo,expectedLines.shift()); return;
                     obtainedLines.push(lineInfo);
                 }).then(function(exitCode){
+                    if(fixture.slice) {
+                        obtainedLines = obtainedLines.slice(fixture.slice[0], fixture.slice[1]);
+                    }
+                    //console.log("OL", obtainedLines); console.log("EX", fixture.expected);
                     expect(obtainedLines).to.eql(fixture.expected);
                     expect(exitCode).to.eql(fixture.exit||0);
                     done();

@@ -34,6 +34,28 @@ execToHtml.commands={
     'echo':{shell:true},
 };
 
+function getAllMatches(regex, text) {
+    if (regex.constructor !== RegExp) {
+        throw new Error('not RegExp');
+    }
+
+    var res = [];
+    var match = null;
+
+    if (regex.global) {
+        while (match = regex.exec(text)) {
+            res.push(match);
+        }
+    }
+    else {
+        if (match = regex.exec(text)) {
+            res.push(match);
+        }
+    }
+
+    return res;
+}
+
 execToHtml.run = function run(commandLines, opts){
     if(!opts || !('echo' in opts)){
         return specialReject('execToHtml.run ERROR: option echo is mandatory');
@@ -130,6 +152,7 @@ execToHtml.run = function run(commandLines, opts){
                         if(resultForEnd==null){
                             resultForEnd='empty result';
                         }
+                        //console.log("FIN:", eventNameForEnd, resultForEnd.toString());
                         flush({origin:eventNameForEnd, text:resultForEnd.toString()});
                     }
                     if(!commandLines.length){
@@ -161,17 +184,27 @@ execToHtml.run = function run(commandLines, opts){
                             if(streamName != executer.origin && executer.buffer.length) {
                                 var buffer = executer.buffer;
                                 executer.buffer = '';
+                                //console.log("cambio de origin");
                                 flush({origin:executer.origin, text:buffer});
                                 executer.origin = streamName;
                             }
                             executer.buffer += rData;
-                            if(executer.buffer.match(os.EOL)) {
-                                var buffers = executer.buffer.split(os.EOL);
-                                var i=0;
-                                for( ; i<buffers.length-1; ++i) {
-                                    flush({origin:streamName,  text:buffers[i]+os.EOL});
+                            var re = /(.*)(\r\n|\r|\n)/gm;
+                            var match = null;
+                            var buffers = [];
+                            while (match = re.exec(executer.buffer)) {
+                                buffers.push(match[0]);
+                            }
+                            if(buffers.length) {
+                                var lenSoFar = 0;
+                                for(var i=0; i<buffers.length; ++i) {
+                                    flush({origin:streamName,  text:buffers[i]});
+                                    lenSoFar += buffers[i].length;
+                                }if(executer.buffer.length > lenSoFar) {
+                                    executer.buffer = executer.buffer.substring(lenSoFar); 
+                                } else {
+                                    executer.buffer = '';
                                 }
-                                executer.buffer = buffers[i];
                             }
                         }
                     });
