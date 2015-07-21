@@ -11,20 +11,6 @@ var stream = require('stream');
 var util = require('util');
 var os = require('os');
 
-/*
-function StringStream(){
-    this.buffer=[];
-    stream.Writable.call(this);
-};
-util.inherits(StringStream, stream.Writable); 
-StringStream.prototype._write = function(chunk, encoding, done) { 
-  this.buffer.push(chunk.toString());
-  done();
-}
-*/
-
-// process.stdin.pipe(myStream);
-
 describe('exec-to-html', function(){
     describe('internal streams', function(){
         it('first simple test', function(done){

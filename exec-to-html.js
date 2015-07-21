@@ -34,28 +34,6 @@ execToHtml.commands={
     'echo':{shell:true},
 };
 
-function getAllMatches(regex, text) {
-    if (regex.constructor !== RegExp) {
-        throw new Error('not RegExp');
-    }
-
-    var res = [];
-    var match = null;
-
-    if (regex.global) {
-        while (match = regex.exec(text)) {
-            res.push(match);
-        }
-    }
-    else {
-        if (match = regex.exec(text)) {
-            res.push(match);
-        }
-    }
-
-    return res;
-}
-
 execToHtml.run = function run(commandLines, opts){
     if(!opts || !('echo' in opts)){
         return specialReject('execToHtml.run ERROR: option echo is mandatory');
