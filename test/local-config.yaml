@@ -1,0 +1,6 @@
+# local commands
+commands: 
+  diskspace: 
+    {win: dir|find "dirs", unix: df -h --total | grep total, shell: True}
+  listar:
+    {win: "dir/b", unix: ls, shell: True}

@@ -4,7 +4,7 @@ var _ = require('lodash');
 var stream = require('stream');
 var expect = require('expect.js');
 var execToHtml = require('..');
-
+var Path = require('path');
 var fixtures = require('./fixtures.js');
 
 var stream = require('stream');
@@ -14,13 +14,39 @@ var os = require('os');
 describe('exec-to-html', function(){
     describe('internal streams', function(){
         it('first simple test', function(done){
-            var lineCount=0;
             var obtainedLines=[];
             execToHtml.run('!echo hi5',{echo:false}).onLine(function(lineInfo){
                 obtainedLines.push(lineInfo);
             }).then(function(exitCode){
                 expect(obtainedLines).to.eql([{origin:'stdout', text:'hi5'+os.EOL}]);
                 expect(exitCode).to.be(0);
+                done();
+            }).catch(done);
+        });
+        it('should register commands from a local-config.yaml (#14)', function(done){
+            var here=process.cwd();
+            process.chdir('./test');
+            var expCmds =  _.cloneDeep(execToHtml.commands);
+            expCmds['diskspace'] = {
+               win: 'dir|find "dirs"', unix: 'df -h --total | grep total', shell: true
+            };
+            expCmds['listar'] = { win: 'dir/b', unix: 'ls', shell: true };
+            execToHtml.addLocalCommands(execToHtml.commands).then(function(commands) {
+                expect(commands).to.eql(expCmds);
+                process.chdir(here);
+                done();
+            }).catch(done);
+        });
+        it('could run commands from a local-config.yaml (#14)', function(done){
+            var obtainedLines=[];
+            var here=process.cwd();
+            process.chdir('./test');
+            execToHtml.run('listar *fixtures.js',{echo:false}).onLine(function(lineInfo){
+                obtainedLines.push(lineInfo);
+            }).then(function(exitCode){
+                expect(obtainedLines).to.eql([{origin:'stdout', text:'fixtures.js'+os.EOL}]);
+                expect(exitCode).to.be(0);
+                process.chdir(here);
                 done();
             }).catch(done);
         });
@@ -37,7 +63,6 @@ describe('exec-to-html', function(){
                 var expectedLines=fixture.expected.slice(0);
                 var obtainedLines=[];
                 execToHtml.run(fixture.commands,fixture.opts).onLine(function(lineInfo){
-                    // console.log('expect(',lineInfo,expectedLines.shift()); return;
                     obtainedLines.push(lineInfo);
                 }).then(function(exitCode){
                     if(fixture.slice) {

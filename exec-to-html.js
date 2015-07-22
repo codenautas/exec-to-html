@@ -10,6 +10,8 @@ var Promises = require('best-promise');
 var spawn = require("child_process").spawn;
 var iconv = require('iconv-lite');
 var os = require('os');
+var fs = require('fs-promise');
+var readYaml = require('read-yaml-promise');
 
 var IDX_STDOUT  = 1;// 001
 var IDX_STDERR  = 2;// 010
@@ -34,6 +36,25 @@ execToHtml.commands={
     'echo':{shell:true},
 };
 
+execToHtml.addLocalCommands = function addLocalCommands(existingCommands) {
+    var localyaml='./local-config.yaml';
+    return Promises.start(function() {
+        return fs.exists(localyaml);
+    }).then(function(existsYAML) {
+        if(existsYAML) { return readYaml(localyaml); }
+        return false;
+    }).then(function(yamlconf){
+        var cmds=yamlconf['commands'];
+        if(cmds) {
+            var cmd;
+            for(cmd in cmds) {
+                existingCommands[cmd] = cmds[cmd];
+            }
+        }
+        return existingCommands;
+    });
+}
+
 execToHtml.run = function run(commandLines, opts){
     if(!opts || !('echo' in opts)){
         return specialReject('execToHtml.run ERROR: option echo is mandatory');
@@ -49,6 +70,9 @@ execToHtml.run = function run(commandLines, opts){
     }
     var runner={
         onLine:function(flush){
+            return Promises.start(function() {
+                return execToHtml.addLocalCommands(execToHtml.commands);
+            }).then(function() {
             var streamer=function(resolve,reject){
                 var commandLine=commandLines[0];
                 commandLines=commandLines.slice(1);
@@ -79,6 +103,9 @@ execToHtml.run = function run(commandLines, opts){
                         if(winOS && infoCommand.win){
                             commandInfo.command=infoCommand.win;
                             lineForEmit.realCommand=infoCommand.win;
+                        } else if(infoCommand.unix) {
+                            commandInfo.command=infoCommand.unix;
+                            lineForEmit.realCommand=infoCommand.unix;
                         }
                     }
                 }
@@ -130,7 +157,6 @@ execToHtml.run = function run(commandLines, opts){
                         if(resultForEnd==null){
                             resultForEnd='empty result';
                         }
-                        //console.log("FIN:", eventNameForEnd, resultForEnd.toString());
                         flush({origin:eventNameForEnd, text:resultForEnd.toString()});
                     }
                     if(!commandLines.length){
@@ -187,8 +213,9 @@ execToHtml.run = function run(commandLines, opts){
                 });
             };
             return new Promises.Promise(streamer);
+            });
         }
-    }
+    };
     if(opts.collect){
         var result={};
         return runner.onLine(function(lineInfo){
