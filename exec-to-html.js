@@ -52,7 +52,7 @@ execToHtml.run = function run(commandLines, opts){
             var streamer=function(resolve,reject){
                 var commandLine=commandLines[0];
                 commandLines=commandLines.slice(1);
-                var lineForEmit={};
+                var lineForEmit={origin:'unknown'}; // para que origin esté primero en la lista de propiedades
                 if(typeof commandLine === 'string'){
                     var commandInfo={};
                     if(commandLine[0]==='!'){
