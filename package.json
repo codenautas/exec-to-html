@@ -30,7 +30,7 @@
     "colors": "1.1.2",
 
     "extension-serve-static": "^0.1.6",
-    "ajax-best-promise": ">=0.0.3"
+    "ajax-best-promise": ">=0.0.5"
   },
   "main": "exec-to-html.js",
   "engines": {
