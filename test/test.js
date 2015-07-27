@@ -10,6 +10,7 @@ var fixtures = require('./fixtures.js');
 var stream = require('stream');
 var util = require('util');
 var os = require('os');
+var winOS = Path.sep==='\\';
 
 describe('exec-to-html', function(){
     describe('internal streams', function(){
@@ -20,33 +21,6 @@ describe('exec-to-html', function(){
             }).then(function(exitCode){
                 expect(obtainedLines).to.eql([{origin:'stdout', text:'hi5'+os.EOL}]);
                 expect(exitCode).to.be(0);
-                done();
-            }).catch(done);
-        });
-        it('should register commands from a local-config.yaml (#14)', function(done){
-            var here=process.cwd();
-            process.chdir('./test');
-            var expCmds =  _.cloneDeep(execToHtml.commands);
-            expCmds['diskspace'] = {
-               win: 'dir|find "dirs"', unix: 'df -h --total | grep total', shell: true
-            };
-            expCmds['listar'] = { win: 'dir/b', unix: 'ls', shell: true };
-            execToHtml.addLocalCommands(execToHtml.commands).then(function(commands) {
-                expect(commands).to.eql(expCmds);
-                process.chdir(here);
-                done();
-            }).catch(done);
-        });
-        it('could run commands from a local-config.yaml (#14)', function(done){
-            var obtainedLines=[];
-            var here=process.cwd();
-            process.chdir('./test');
-            execToHtml.run('listar *fixtures.js',{echo:false}).onLine(function(lineInfo){
-                obtainedLines.push(lineInfo);
-            }).then(function(exitCode){
-                expect(obtainedLines).to.eql([{origin:'stdout', text:'fixtures.js'+os.EOL}]);
-                expect(exitCode).to.be(0);
-                process.chdir(here);
                 done();
             }).catch(done);
         });
@@ -96,6 +70,34 @@ describe('exec-to-html', function(){
             }).catch(function(err){
                 expect(err).to.be.a(Error);
                 expect(err.message).to.match(/option echo is mandatory/);
+                done();
+            }).catch(done);
+        });
+    });
+    describe('commands from local-config.yaml', function(){
+        // modifico el archivo default
+        execToHtml.localYamlFile = './test/local-config.yaml';
+        var expCmds;
+        beforeEach(function(){
+            expCmds =  _.cloneDeep(execToHtml.commands);
+            expCmds['diskspace'] = {
+               win: 'dir|find "dirs"', unix: 'df -h --total | grep total', shell: true
+            };
+            expCmds['listar'] = { win: 'dir/b', unix: 'ls', shell: true };
+        });
+        it('should register commands', function(done){
+            execToHtml.addLocalCommands(execToHtml.commands).then(function(commands) {
+                expect(commands).to.eql(expCmds);
+                done();
+            }).catch(done);
+        });
+        it('could run commands (#14)', function(done){
+            var obtainedLines=[];
+            execToHtml.run('listar test'+Path.sep+'fixtures.js',{echo:false}).onLine(function(lineInfo){
+                obtainedLines.push(lineInfo);
+            }).then(function(exitCode){
+                expect(obtainedLines).to.eql([{origin:'stdout', text:(winOS?'fixtures.js':'test/fixtures.js')+os.EOL}]);
+                expect(exitCode).to.be(0);
                 done();
             }).catch(done);
         });
