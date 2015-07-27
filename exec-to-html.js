@@ -233,6 +233,69 @@ execToHtml.run = function run(commandLines, opts){
     return runner;
 };
 
+execToHtml.actions = {
+    install:{
+        prepare:function(projectName,opts){
+            var dir=opts.baseDir+projectName;
+            return fs.stat(dir).then(function(stat){
+                if(!stat.isDirectory){
+                    throw new Error('invalid project name. Not a Directory');
+                }
+                return {runArgs:[[
+                    'git pull',
+                    'npm prune',
+                    'npm install',
+                    'npm test'
+                ],{echo:true, exit:true, cwd:dir}]};
+            });
+        }
+    }
+}
 
+function serveErr(req,res,next){
+    return function(err){
+        if(err.message=='next'){
+            return next();
+        }
+        console.log('ERROR', err);
+        console.log('STACK', err.stack);
+        var text='ERROR! '+(err.code||'')+'\n'+err.message+'\n------------------\n'+err.stack;
+        res.writeHead(400, {
+            'Content-Length': text.length,
+            'Content-Type': 'text/plain; charset=utf-8'
+        });
+        res.end(text);
+    }
+}
+
+execToHtml.middleware = function execToHtmlMiddleware(opts){
+    return function(req,res,next){
+        console.log('req.path', req.path);
+        var actionName;
+        var projectName;
+        Promises.start(function(){
+            var params=req.path.split('/');
+            if(params.length!=3){
+                throw new Error('execToHtml.middleware expect /action/name');
+            }
+            actionName=params[1];
+            projectName=params[2];
+            console.log('ready to',actionName,projectName);
+            return execToHtml.actions[actionName].prepare(projectName,opts);
+        }).then(function(prepared){
+            if(req.xhr){
+                console.log('ajax request detected');
+                res.append('Content-Type', 'application/octet-stream'); // por chrome bug segun: http://stackoverflow.com/questions/3880381/xmlhttprequest-responsetext-while-loading-readystate-3-in-chrome
+            }
+            return execToHtml.run.apply(execToHtml,prepared.runArgs).onLine(function(lineInfo){
+                console.log(lineInfo);
+                res.write(JSON.stringify(lineInfo)+'\n');
+            }).then(function(){
+                console.log('end!');
+                res.end();
+            });
+        }).catch(serveErr(req,res));
+    };
+}
 
 module.exports=execToHtml;

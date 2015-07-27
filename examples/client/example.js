@@ -10,8 +10,8 @@ window.addEventListener('load', function(){
         eid('result').className='res_partial';
         var currentDiv;
         AjaxBestPromise.get({
-            url:'/install',
-            data:AjaxBestPromise.fromElements(['project'])
+            url:'/tools/install/'+AjaxBestPromise.completePath(['project']),
+            data:{}
         }).onJson(function(line){
             if(!currentDiv || currentDiv.className!=line.origin){
                 currentDiv=document.createElement('pre');

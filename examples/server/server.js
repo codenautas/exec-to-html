@@ -101,31 +101,5 @@ var server=app.listen(PORT, function(event) {
 app.get('/',serveHtmlText('<h1>Exec-To-Html</h1>'));
 
 // localhost:12449/install?project=auto-deploy
-app.get('/install',function(req,res){
-    var projectName=req.query.project;
-    console.log('ready to install',projectName);
-    var dir='../'+projectName;
-    fs.stat(dir).then(function(stat){
-        if(!stat.isDirectory){
-            throw new Error('invalid project name. Not a Directory');
-        }
-    }).then(function(){
-        if(req.xhr){
-            console.log('ajax request detected');
-            res.append('Content-Type', 'application/octet-stream'); // por chrome bug segun: http://stackoverflow.com/questions/3880381/xmlhttprequest-responsetext-while-loading-readystate-3-in-chrome
-        }
-        return execToHtml.run([
-            'git pull',
-            'npm prune',
-            'npm install',
-            'npm test'
-        ],{echo:true, exit:true, cwd:dir/*, encoding:winOS?'cp437':'utf8'*/}).onLine(function(lineInfo){
-            console.log(lineInfo);
-            res.write(JSON.stringify(lineInfo)+'\n');
-        }).then(function(){
-            console.log('end!');
-            res.end();
-        });
-    }).catch(serveErr(req,res));
-});
+app.use('/tools',execToHtml.middleware({baseDir:'../'}));
 
