@@ -39,10 +39,7 @@ execToHtml.commands={
 execToHtml.addLocalCommands = function addLocalCommands(existingCommands) {
     var localyaml='./local-config.yaml';
     return Promises.start(function() {
-        return fs.exists(localyaml);
-    }).then(function(existsYAML) {
-        if(existsYAML) { return readYaml(localyaml); }
-        return false;
+        return readYaml(localyaml);
     }).then(function(yamlconf){
         var cmds=yamlconf['commands'];
         if(cmds) {
@@ -52,6 +49,8 @@ execToHtml.addLocalCommands = function addLocalCommands(existingCommands) {
             }
         }
         return existingCommands;
+    }).catch(function(err) {
+        return false;
     });
 }
 
