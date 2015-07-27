@@ -84,6 +84,8 @@ describe('exec-to-html', function(){
                win: 'dir|find "dirs"', unix: 'df -h --total | grep total', shell: true
             };
             expCmds['listar'] = { win: 'dir/b', unix: 'ls', shell: true };
+            // fuerzo la relectura del local-config.yaml
+            execToHtml.extraCommandsLoaded = undefined;
         });
         it('should register commands', function(done){
             execToHtml.addLocalCommands(execToHtml.commands).then(function(commands) {
@@ -99,6 +101,28 @@ describe('exec-to-html', function(){
                 expect(obtainedLines).to.eql([{origin:'stdout', text:(winOS?'fixtures.js':'test/fixtures.js')+os.EOL}]);
                 expect(exitCode).to.be(0);
                 done();
+            }).catch(done);
+        });
+        it('should parse config only once', function(done){
+            var obtainedLines=[];
+            var args = 'listar test'+Path.sep+'fixtures.js';
+            var params = {echo:false};
+            var expLine = {origin:'stdout', text:(winOS?'fixtures.js':'test/fixtures.js')+os.EOL};
+            function parseLine(lineInfo) {
+                obtainedLines.push(lineInfo);
+            }
+            expect(execToHtml.extraCommandsLoaded).to.be(undefined);
+            execToHtml.run(args,params).onLine(parseLine).then(function(exitCode){
+                expect(obtainedLines).to.eql([expLine]);
+                expect(obtainedLines.length).to.be(1);
+                expect(exitCode).to.be(0);
+                expect(execToHtml.extraCommandsLoaded).to.be(true);
+                return execToHtml.run(args, params).onLine(parseLine).then(function(exitCode) {
+                    expect(obtainedLines).to.eql([expLine, expLine]);
+                    expect(obtainedLines.length).to.be(2);
+                    expect(exitCode).to.be(0);
+                    done();
+                });
             }).catch(done);
         });
     });

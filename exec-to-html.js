@@ -33,7 +33,7 @@ function specialReject(message){
 execToHtml.commands={
     'npm':{shell:true},
     'ls':{shell:true, win:'dir/b'},
-    'echo':{shell:true},
+    'echo':{shell:true}
 };
 
 execToHtml.localYamlFile = './local-config.yaml';
@@ -70,147 +70,152 @@ execToHtml.run = function run(commandLines, opts){
     var runner={
         onLine:function(flush){
             return Promises.start(function() {
-                return execToHtml.addLocalCommands(execToHtml.commands);
+                if(! execToHtml.extraCommandsLoaded) {
+                    execToHtml.extraCommandsLoaded = true;
+                    return execToHtml.addLocalCommands(execToHtml.commands);
+                } else {
+                    return true;
+                }
             }).then(function() {
-            var streamer=function(resolve,reject){
-                var commandLine=commandLines[0];
-                commandLines=commandLines.slice(1);
-                var lineForEmit={origin:'unknown'}; // para que origin esté primero en la lista de propiedades
-                if(typeof commandLine === 'string'){
-                    var commandInfo={};
-                    if(commandLine[0]==='!'){
-                        commandInfo.shell=true;
-                        commandLine=commandLine.substr(1);
-                    }
-                    commandInfo.params=commandLine.split(' ');
-                    commandInfo.command=commandInfo.params[0];
-                    commandInfo.params.splice(0, 1);
-                    lineForEmit.text=commandLine;
-                }else{
-                    var commandInfo=commandLine;
-                    lineForEmit.text=[commandLine.command].concat(commandLine.params.map(function(param){
-                        if(/ /.test(param)){
-                            return JSON.stringify(param);
+                var streamer=function(resolve,reject){
+                    var commandLine=commandLines[0];
+                    commandLines=commandLines.slice(1);
+                    var lineForEmit={origin:'unknown'}; // para que origin esté primero en la lista de propiedades
+                    if(typeof commandLine === 'string'){
+                        var commandInfo={};
+                        if(commandLine[0]==='!'){
+                            commandInfo.shell=true;
+                            commandLine=commandLine.substr(1);
                         }
-                        return param;
-                    })).join(' ');
-                }
-                if(!('shell' in commandInfo)){
-                    var infoCommand=execToHtml.commands[commandInfo.command];
-                    if(infoCommand){
-                        commandInfo.shell=!!infoCommand.shell;
-                        if(winOS && infoCommand.win){
-                            commandInfo.command=infoCommand.win;
-                            lineForEmit.realCommand=infoCommand.win;
-                        } else if(infoCommand.unix) {
-                            commandInfo.command=infoCommand.unix;
-                            lineForEmit.realCommand=infoCommand.unix;
-                        }
-                    }
-                }
-                if(commandInfo.shell){ 
-                    lineForEmit.origin='shell';
-                    /* coverage depends on OS */
-                    /* istanbul ignore next */
-                    if(winOS){
-                        commandInfo.params.unshift(commandInfo.command);
-                        commandInfo.params.unshift('/c');
-                        commandInfo.command='cmd.exe';
-                    } else {
-                        // Ponemos comillas si hay espacios en el nombre
-                        commandInfo.params = _.map(commandInfo.params, function(e) {
-                            return (e.match(/ /)) ? '"' + e + '"' : e;
-                        });
-                        commandInfo.params = [commandInfo.command+' '+ commandInfo.params.join(' ')];
-                        commandInfo.params.unshift('-c');
-                        commandInfo.command='sh';
-                    }
-                }else{
-                    lineForEmit.origin='command';
-                }
-                var spawnOpts={stdio: [ 'ignore', 'pipe', 'pipe']};
-                if(opts.cwd){
-                    spawnOpts.cwd=path.resolve(opts.cwd);
-                }
-                if(opts.echo){
-                    flush(lineForEmit);
-                }
-                var remainSignals=IDX_STDOUT | IDX_STDERR | BITMASK_END;
-                var endFunctions={
-                    exit: {resolveOrReject:resolve, flags:BITMASK_END  }, 
-                    error:{resolveOrReject:opts.throwError?reject:resolve , flags:remainSignals}
-                };
-                var eventNameForEnd = null;
-                var resultForEnd = null;
-                var finalizer=function(bitmask, result, eventName){
-                    if(eventName){
-                        eventNameForEnd = eventName;
-                        resultForEnd = result;
-                    }
-                    remainSignals = remainSignals & ~bitmask;
-                    if(remainSignals) return;
-                    if(executer.buffer && executer.buffer.length) {
-                        flush({origin: executer.origin, text:executer.buffer});
-                    }
-                    if(opts[eventNameForEnd]){
-                        if(resultForEnd==null){
-                            resultForEnd='empty result';
-                        }
-                        flush({origin:eventNameForEnd, text:resultForEnd.toString()});
-                    }
-                    if(!commandLines.length){
-                        endFunctions[eventNameForEnd].resolveOrReject(resultForEnd);
+                        commandInfo.params=commandLine.split(' ');
+                        commandInfo.command=commandInfo.params[0];
+                        commandInfo.params.splice(0, 1);
+                        lineForEmit.text=commandLine;
                     }else{
-                        streamer(resolve,reject);
+                        var commandInfo=commandLine;
+                        lineForEmit.text=[commandLine.command].concat(commandLine.params.map(function(param){
+                            if(/ /.test(param)){
+                                return JSON.stringify(param);
+                            }
+                            return param;
+                        })).join(' ');
                     }
-                }
-                var executer=spawn(commandInfo.command, commandInfo.params, spawnOpts);
-                _.forEach({stdout:1, stderr:2},function(streamIndex, streamName){
-                    executer.stdio[streamIndex].on('data', function(data){
-                        /* NO BORRAR, QUIZÁS LO NECESITEMOS PARA DEDUCIR encoding
-                        if(opts.encoding && false){
-                            console.log('dentro','français');
-                            ['utf8','win1251','latin1','cp437'].forEach(function(encoding){
-                                console.log(encoding, iconv.decode(data,encoding), encoding==opts.encoding, iconv.decode(data,opts.encoding));
-                            });
-                            console.log('saliendo',opts.encoding?iconv.decode(data,opts.encoding):data.toString());
+                    if(!('shell' in commandInfo)){
+                        var infoCommand=execToHtml.commands[commandInfo.command];
+                        if(infoCommand){
+                            commandInfo.shell=!!infoCommand.shell;
+                            if(winOS && infoCommand.win){
+                                commandInfo.command=infoCommand.win;
+                                lineForEmit.realCommand=infoCommand.win;
+                            } else if(infoCommand.unix) {
+                                commandInfo.command=infoCommand.unix;
+                                lineForEmit.realCommand=infoCommand.unix;
+                            }
                         }
-                        */
-                        var rData = opts.encoding?iconv.decode(data,opts.encoding):data.toString();
-                        if(! opts.buffering) {
-                            flush({origin:streamName,  text:rData});
+                    }
+                    if(commandInfo.shell){ 
+                        lineForEmit.origin='shell';
+                        /* coverage depends on OS */
+                        /* istanbul ignore next */
+                        if(winOS){
+                            commandInfo.params.unshift(commandInfo.command);
+                            commandInfo.params.unshift('/c');
+                            commandInfo.command='cmd.exe';
                         } else {
-                            if(!executer.buffer) { 
-                                executer.buffer = '';
-                                executer.origin = streamName;
-                            }
-                            if(streamName != executer.origin && executer.buffer.length) {
-                                var buffer = executer.buffer;
-                                executer.buffer = '';
-                                flush({origin:executer.origin, text:buffer});
-                                executer.origin = streamName;
-                            }
-                            executer.buffer += rData;
-                            if(executer.buffer.match(/\r[^\n]|\n/)) {
-                                var buffers = executer.buffer.split(/(\r\n|\r(?!\n)|\n)/);
-                                var i=0;
-                                for( ; i<buffers.length-1; i+=2) {
-                                    flush({origin:streamName,  text:buffers[i]+buffers[i+1]});
-                                }
-                                executer.buffer = buffers[i];
-                            }
+                            // Ponemos comillas si hay espacios en el nombre
+                            commandInfo.params = _.map(commandInfo.params, function(e) {
+                                return (e.match(/ /)) ? '"' + e + '"' : e;
+                            });
+                            commandInfo.params = [commandInfo.command+' '+ commandInfo.params.join(' ')];
+                            commandInfo.params.unshift('-c');
+                            commandInfo.command='sh';
                         }
+                    }else{
+                        lineForEmit.origin='command';
+                    }
+                    var spawnOpts={stdio: [ 'ignore', 'pipe', 'pipe']};
+                    if(opts.cwd){
+                        spawnOpts.cwd=path.resolve(opts.cwd);
+                    }
+                    if(opts.echo){
+                        flush(lineForEmit);
+                    }
+                    var remainSignals=IDX_STDOUT | IDX_STDERR | BITMASK_END;
+                    var endFunctions={
+                        exit: {resolveOrReject:resolve, flags:BITMASK_END  }, 
+                        error:{resolveOrReject:opts.throwError?reject:resolve , flags:remainSignals}
+                    };
+                    var eventNameForEnd = null;
+                    var resultForEnd = null;
+                    var finalizer=function(bitmask, result, eventName){
+                        if(eventName){
+                            eventNameForEnd = eventName;
+                            resultForEnd = result;
+                        }
+                        remainSignals = remainSignals & ~bitmask;
+                        if(remainSignals) return;
+                        if(executer.buffer && executer.buffer.length) {
+                            flush({origin: executer.origin, text:executer.buffer});
+                        }
+                        if(opts[eventNameForEnd]){
+                            if(resultForEnd==null){
+                                resultForEnd='empty result';
+                            }
+                            flush({origin:eventNameForEnd, text:resultForEnd.toString()});
+                        }
+                        if(!commandLines.length){
+                            endFunctions[eventNameForEnd].resolveOrReject(resultForEnd);
+                        }else{
+                            streamer(resolve,reject);
+                        }
+                    }
+                    var executer=spawn(commandInfo.command, commandInfo.params, spawnOpts);
+                    _.forEach({stdout:1, stderr:2},function(streamIndex, streamName){
+                        executer.stdio[streamIndex].on('data', function(data){
+                            /* NO BORRAR, QUIZÁS LO NECESITEMOS PARA DEDUCIR encoding
+                            if(opts.encoding && false){
+                                console.log('dentro','français');
+                                ['utf8','win1251','latin1','cp437'].forEach(function(encoding){
+                                    console.log(encoding, iconv.decode(data,encoding), encoding==opts.encoding, iconv.decode(data,opts.encoding));
+                                });
+                                console.log('saliendo',opts.encoding?iconv.decode(data,opts.encoding):data.toString());
+                            }
+                            */
+                            var rData = opts.encoding?iconv.decode(data,opts.encoding):data.toString();
+                            if(! opts.buffering) {
+                                flush({origin:streamName,  text:rData});
+                            } else {
+                                if(!executer.buffer) { 
+                                    executer.buffer = '';
+                                    executer.origin = streamName;
+                                }
+                                if(streamName != executer.origin && executer.buffer.length) {
+                                    var buffer = executer.buffer;
+                                    executer.buffer = '';
+                                    flush({origin:executer.origin, text:buffer});
+                                    executer.origin = streamName;
+                                }
+                                executer.buffer += rData;
+                                if(executer.buffer.match(/\r[^\n]|\n/)) {
+                                    var buffers = executer.buffer.split(/(\r\n|\r(?!\n)|\n)/);
+                                    var i=0;
+                                    for( ; i<buffers.length-1; i+=2) {
+                                        flush({origin:streamName,  text:buffers[i]+buffers[i+1]});
+                                    }
+                                    executer.buffer = buffers[i];
+                                }
+                            }
+                        });
+                        executer.stdio[streamIndex].on('end', function(){
+                            finalizer(streamIndex);
+                        });
                     });
-                    executer.stdio[streamIndex].on('end', function(){
-                        finalizer(streamIndex);
+                    _.forEach(endFunctions,function(infoEvent, eventName){
+                        executer.on(eventName, function(result){
+                            finalizer(infoEvent.flags,result,eventName);
+                        });
                     });
-                });
-                _.forEach(endFunctions,function(infoEvent, eventName){
-                    executer.on(eventName, function(result){
-                        finalizer(infoEvent.flags,result,eventName);
-                    });
-                });
-            };
+                };
             return new Promises.Promise(streamer);
             });
         }
