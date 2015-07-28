@@ -8,9 +8,6 @@ html(lang="es")
     div
       label project name to update:
       input#project(value='dir-info')
-      button#start <big><b>U</b></big>pdate
-    pre#result
-    pre#result_err.err_no_esp
-    script(src='ajax-best-promise.js')
-    script(src='example.js')
-      
+      button#start(disabled=true) <big><b>U</b></big>pdate
+    #iframe
+    script(src="example.js")

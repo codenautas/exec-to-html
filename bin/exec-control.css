@@ -1,0 +1,45 @@
+body{
+    font-family: Arial;
+}
+
+.err_no_esp{
+    background-color:#fa8
+}
+
+.res_ok{
+    background-color:#6d6
+}
+
+.res_partial{
+    background-color:#dd2;
+}
+
+pre{
+    margin:0px;
+}
+
+.command{
+    background-color:#ddd;
+}
+
+.shell{
+    background-color:#ddd;
+}
+
+.stderr{
+    background-color:#fdd;
+}
+
+.stdout{
+    background-color:#cfc;
+}
+
+.exit{
+    background-color:#ccf;
+    min-height:3px;
+}
+
+#status-bar{
+    background-color:#ddd;
+    border:1px solid #aaa;
+}

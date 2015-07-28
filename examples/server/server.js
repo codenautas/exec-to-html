@@ -10,7 +10,7 @@ var Promises = require('best-promise');
 var fs = require('fs-promise');
 var path = require('path');
 var readYaml = require('read-yaml-promise');
-var extensionServeStatic = require('extension-serve-static');
+var extensionServe = require('extension-serve');
 var jade = require('jade');
 
 console.log('cwd',process.cwd());
@@ -68,7 +68,7 @@ function serveErr(req,res,next){
     }
 }
 
-var mime = extensionServeStatic.mime;
+var mime = extensionServe.mime;
 
 var validExts=[
     'html',
@@ -82,7 +82,7 @@ app.use('/ajax-best-promise.js',function(req,res){
     res.sendFile(process.cwd()+'/node_modules/ajax-best-promise/bin/ajax-best-promise.js');
 });
 
-app.use('/',extensionServeStatic('./examples/client', {
+app.use('/',extensionServe('./examples/client', {
     index: ['index.html'], 
     extensions:[''], 
     staticExtensions:validExts
@@ -101,5 +101,5 @@ var server=app.listen(PORT, function(event) {
 app.get('/',serveHtmlText('<h1>Exec-To-Html</h1>'));
 
 // localhost:12449/install?project=auto-deploy
-app.use('/tools',execToHtml.middleware({baseDir:'../'}));
+app.use('/tools',execToHtml.middleware({baseDir:'../', control:true}));
 
