@@ -4,6 +4,8 @@ function eid(x){
     return document.getElementById(x);
 }
 
+var baseUrlTool;
+
 function startAction(){
     eid('status').textContent='starting';
     eid('result').textContent='';
@@ -11,7 +13,7 @@ function startAction(){
     var lineCount=0;
     var currentDiv;
     AjaxBestPromise.get({
-        url:'/tools/'+AjaxBestPromise.completePath(['action','project']),
+        url:baseUrlTool+'/'+AjaxBestPromise.completePath(['action','project']),
         data:{}
     }).onJson(function(line){
         eid('status').textContent='executing '+(++lineCount);
@@ -37,6 +39,7 @@ function startAction(){
 
 window.addEventListener('load', function(){
     var params=window.location.href.split('/');
+    baseUrlTool=params.slice(0,params.length-3).join('/');
     params.reverse();
     eid('action').textContent=params[1];
     eid('project').textContent=params[0];
