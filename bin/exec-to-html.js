@@ -262,12 +262,10 @@ execToHtml.actions = {
 
 execToHtml.middleware = function execToHtmlMiddleware(opts){
     return function(req,res,next){
-        console.log('req.path', req.path);
         var actionName;
         Promises.start(function(){
             var params=req.path.split('/');
             actionName=params[1];
-            console.log('ready to',actionName,projectName);
             if(actionName==='controls'){
                 if(params[2]==='resources'){
                     var pathFile='/'+params.slice(3).join('/');
@@ -285,14 +283,11 @@ execToHtml.middleware = function execToHtmlMiddleware(opts){
                     return execToHtml.actions[actionName].prepare(opts,projectName);
                 }).then(function(prepared){
                     if(req.xhr){
-                        console.log('ajax request detected');
                         res.append('Content-Type', 'application/octet-stream'); // por chrome bug segun: http://stackoverflow.com/questions/3880381/xmlhttprequest-responsetext-while-loading-readystate-3-in-chrome
                     }
                     return execToHtml.run.apply(execToHtml,prepared.runArgs).onLine(function(lineInfo){
-                        console.log(lineInfo);
                         res.write(JSON.stringify(lineInfo)+'\n');
                     }).then(function(){
-                        console.log('end!');
                         res.end();
                     });
                 });
