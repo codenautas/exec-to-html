@@ -30,25 +30,27 @@ describe('exec-to-html', function(){
                 });
                 return;
             }
-            it('run fixture with stream. For fixutreName='+fixture.name,function(done){
-                if(fixture.timeout){
-                    this.timeout(fixture.timeout*(process.env.APPVEYOR?3:1));
-                }
-                var expectedLines=fixture.expected.slice(0);
-                var obtainedLines=[];
-                execToHtml.run(fixture.commands,fixture.opts).onLine(function(lineInfo){
-                    obtainedLines.push(lineInfo);
-                }).then(function(exitCode){
-                    if(fixture.slice) {
-                        obtainedLines = obtainedLines.slice(fixture.slice[0], fixture.slice[1]);
+            if(fixture.expected){
+                it('run fixture with stream. For fixutreName='+fixture.name,function(done){
+                    if(fixture.timeout){
+                        this.timeout(fixture.timeout*(process.env.APPVEYOR?3:1));
                     }
-                    //console.log("OL", obtainedLines); console.log("EX", fixture.expected);
-                    expect(obtainedLines).to.eql(fixture.expected);
-                    //console.log("exitCode",exitCode);
-                    expect(exitCode).to.eql(fixture.exit||0);
-                    done();
-                }).catch(done);
-            });
+                    var expectedLines=fixture.expected.slice(0);
+                    var obtainedLines=[];
+                    execToHtml.run(fixture.commands,fixture.opts).onLine(function(lineInfo){
+                        obtainedLines.push(lineInfo);
+                    }).then(function(exitCode){
+                        if(fixture.slice) {
+                            obtainedLines = obtainedLines.slice(fixture.slice[0], fixture.slice[1]);
+                        }
+                        //console.log("OL", obtainedLines); console.log("EX", fixture.expected);
+                        expect(obtainedLines).to.eql(fixture.expected);
+                        //console.log("exitCode",exitCode);
+                        expect(exitCode).to.eql(fixture.exit||0);
+                        done();
+                    }).catch(done);
+                });
+            }
             if(fixture.collect){
                 it('run fixture with collect. For fixutreName='+fixture.name,function(done){
                     var opts=_.clone(fixture.opts||{});

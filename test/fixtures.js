@@ -40,6 +40,11 @@ var fixtures={
             {origin:'stdout', text:process.cwd()+'\n'},
             {origin:'stderr', text:' info'.green+' it worked if it ends with'.magenta+' ok\n'}
         ],
+        collect:{
+            shell:'npm prefix --verbose --color=always',
+            stdout:process.cwd()+'\n',
+            stderr:'npm'.white+' info'.green+' it worked if it ends with'.magenta+' ok\n',
+        },
         slice:[0,3],
         skipped:true
     },

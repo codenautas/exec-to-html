@@ -3,8 +3,9 @@ Execute command sending output through stream to client
 
 <!--multilang v0 en:README.md es:LEEME.md -->
 
+<!-- cucardas -->
 ![designing](https://img.shields.io/badge/stability-desgining-red.svg)
-[![version](https://img.shields.io/npm/v/exec-to-html.svg)](https://npmjs.org/package/exec-to-html)
+[![npm-version](https://img.shields.io/npm/v/exec-to-html.svg)](https://npmjs.org/package/exec-to-html)
 [![downloads](https://img.shields.io/npm/dm/exec-to-html.svg)](https://npmjs.org/package/exec-to-html)
 [![linux](https://img.shields.io/travis/codenautas/exec-to-html/master.svg)](https://travis-ci.org/codenautas/exec-to-html)
 [![windows](https://ci.appveyor.com/api/projects/status/github/codenautas/exec-to-html?svg=true)](https://ci.appveyor.com/project/codenautas/exec-to-html)

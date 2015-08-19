@@ -1,7 +1,9 @@
 "use strict";
-/* eqnull:true */
+/*jshint eqnull:true */
+/*jshint globalstrict:true */
+/*jshint node:true */
 
-var execToHtml={};
+var execToHtml = {};
 
 var _ = require('lodash');
 var stream = require('stream');
@@ -21,9 +23,9 @@ var IDX_STDOUT  = 1;// 001
 var IDX_STDERR  = 2;// 010
 var BITMASK_END = 4;// 100
 
-var path = require('path');
+var Path = require('path');
 
-var winOS = path.sep==='\\';
+var winOS = Path.sep==='\\';
 
 function specialReject(message){
     var p=Promises.reject(new Error(message));
@@ -45,18 +47,19 @@ execToHtml.addLocalCommands = function addLocalCommands(existingCommands) {
     return Promises.start(function() {
         return readYaml(execToHtml.localYamlFile);
     }).then(function(yamlconf){
-        var cmds=yamlconf['commands'];
+        var cmds=yamlconf.commands;
         if(cmds) {
-            var cmd;
-            for(cmd in cmds) {
+            /*jshint forin: false */
+            for(var cmd in cmds) {
                 existingCommands[cmd] = cmds[cmd];
             }
+            /*jshint forin: true */
         }
         return existingCommands;
     }).catch(function(err) {
         return false;
     });
-}
+};
 
 execToHtml.run = function run(commandLines, opts){
     if(!opts || !('echo' in opts)){
@@ -85,8 +88,9 @@ execToHtml.run = function run(commandLines, opts){
                     var commandLine=commandLines[0];
                     commandLines=commandLines.slice(1);
                     var lineForEmit={origin:'unknown'}; // para que origin esté primero en la lista de propiedades
+                    var commandInfo;
                     if(typeof commandLine === 'string'){
-                        var commandInfo={};
+                        commandInfo={};
                         if(commandLine[0]==='!'){
                             commandInfo.shell=true;
                             commandLine=commandLine.substr(1);
@@ -96,7 +100,7 @@ execToHtml.run = function run(commandLines, opts){
                         commandInfo.params.splice(0, 1);
                         lineForEmit.text=commandLine;
                     }else{
-                        var commandInfo=commandLine;
+                        commandInfo=commandLine;
                         lineForEmit.text=[commandLine.command].concat(commandLine.params.map(function(param){
                             if(/ /.test(param)){
                                 return JSON.stringify(param);
@@ -104,8 +108,9 @@ execToHtml.run = function run(commandLines, opts){
                             return param;
                         })).join(' ');
                     }
+                    var infoCommand;
                     if(!('shell' in commandInfo)){
-                        var infoCommand=execToHtml.commands[commandInfo.command];
+                        infoCommand=execToHtml.commands[commandInfo.command];
                         if(infoCommand){
                             commandInfo.shell=!!infoCommand.shell;
                             if(winOS && infoCommand.win){
@@ -139,7 +144,7 @@ execToHtml.run = function run(commandLines, opts){
                     }
                     var spawnOpts={stdio: [ 'ignore', 'pipe', 'pipe']};
                     if(opts.cwd){
-                        spawnOpts.cwd=path.resolve(opts.cwd);
+                        spawnOpts.cwd=Path.resolve(opts.cwd);
                     }
                     if(opts.echo){
                         flush(lineForEmit);
@@ -157,7 +162,9 @@ execToHtml.run = function run(commandLines, opts){
                             resultForEnd = result;
                         }
                         remainSignals = remainSignals & ~bitmask;
-                        if(remainSignals) return;
+                        if(remainSignals){ 
+                            return;
+                        }
                         if(executer.buffer && executer.buffer.length) {
                             flush({origin: executer.origin, text:executer.buffer});
                         }
@@ -172,7 +179,7 @@ execToHtml.run = function run(commandLines, opts){
                         }else{
                             streamer(resolve,reject);
                         }
-                    }
+                    };
                     var executer=spawn(commandInfo.command, commandInfo.params, spawnOpts);
                     _.forEach({stdout:1, stderr:2},function(streamIndex, streamName){
                         executer.stdio[streamIndex].on('data', function(data){
@@ -258,7 +265,7 @@ execToHtml.actions = {
             });
         }
     }
-}
+};
 
 execToHtml.middleware = function execToHtmlMiddleware(opts){
     return function(req,res,next){
@@ -267,10 +274,11 @@ execToHtml.middleware = function execToHtmlMiddleware(opts){
             var params=req.path.split('/');
             actionName=params[1];
             if(actionName==='controls'){
+                var pathFile;
                 if(params[2]==='resources'){
-                    var pathFile='/'+params.slice(3).join('/');
+                    pathFile='/'+params.slice(3).join('/');
                 }else{
-                    var pathFile='exec-control.jade';
+                    pathFile='exec-control.jade';
                 }
                 extensionServe.serveFile(req,res,pathFile,{root:__dirname});
             }else{
@@ -294,6 +302,6 @@ execToHtml.middleware = function execToHtmlMiddleware(opts){
             }
         }).catch(serveErr(req,res));
     };
-}
+};
 
 module.exports=execToHtml;
