@@ -1,17 +1,12 @@
-<!-- multilang from README.md
-
-
-
-
-NO MODIFIQUE ESTE ARCHIVO. FUE GENERADO AUTOMÁTICAMENTE POR multilang.js
-
-
-
-
--->
+<!--multilang v0 es:LEEME.md en:README.md -->
 # exec-to-html
+<!--lang:es-->
+Ejecuta comandos en el servidor enviando la salida en un *Stream* hacia el navegador.
+
+<!--lang:en--]
 Execute command sending output through stream to client
 
+[!--lang:*-->
 
 <!-- cucardas -->
 ![designing](https://img.shields.io/badge/stability-desgining-red.svg)
@@ -29,16 +24,26 @@ idioma: ![castellano](https://raw.githubusercontent.com/codenautas/multilang/mas
 también disponible en:
 [![inglés](https://raw.githubusercontent.com/codenautas/multilang/master/img/lang-en.png)](README.md)
 
-
-Ejecuta comandos en el servidor enviando la salida en un *Stream* hacia el navegador.
-
+<!--lang:es-->
 
 # Objetivo principal
  
  * Correr procesos en el servidor e ir enviando la salida de la consola al navegador
 
+<!--lang:en--]
+
+# Main goal
+
+ * To call process in the back-end sending the output to de front-end
+
+[!--lang:es-->
 
 ## Licencias
 
+<!--lang:en--]
+
+## License
+
+[!--lang:*-->
 
 [MIT](LICENSE)
