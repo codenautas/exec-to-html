@@ -38,6 +38,45 @@ también disponible en:
 
 [!--lang:es-->
 
+# Instalación
+
+<!--lang:en--]
+
+# Install
+
+[!--lang:*-->
+
+```sh
+$ npm install exec-to-html
+```
+
+# Ejemplo de uso
+
+<!--lang:en--]
+
+# Use example
+
+[!--lang:*-->
+
+```js 
+var execToHtml = require('exec-to-html');
+
+execToHtml.run('npm-check-updates',{echo:true}).onLine(function(lineInfo){
+	if(lineInfo.origin === 'stderr'){
+		console.error(lineInfo.text);
+	}else{
+		console.log(lineInfo.text);
+	}
+}).then(function(exitCode){
+	if(exitCode){
+		console.log('exit code =',exitCode);
+	}
+});
+
+```
+
+<!--lang:es-->
+
 ## Licencias
 
 <!--lang:en--]

@@ -22,6 +22,37 @@ also available in:
  * To call process in the back-end sending the output to de front-end
 
 
+# Install
+
+
+```sh
+$ npm install exec-to-html
+```
+
+# Ejemplo de uso
+
+
+# Use example
+
+
+```js
+var execToHtml = require('exec-to-html');
+
+execToHtml.run('npm-check-updates',{echo:true}).onLine(function(lineInfo){
+	if(lineInfo.origin === 'stderr'){
+		console.error(lineInfo.text);
+	}else{
+		console.log(lineInfo.text);
+	}
+}).then(function(exitCode){
+	if(exitCode){
+		console.log('exit code =',exitCode);
+	}
+});
+
+```
+
+
 ## License
 
 
