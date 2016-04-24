@@ -18,8 +18,11 @@ var fixtures={
         ],
         exit:(
             semver.lt(process.version.substr(1),'0.11.0')?
-            {"code":"ENOENT","errno":"ENOENT","syscall":"spawn"}:
-            {"code":"ENOENT","errno":"ENOENT","syscall":"spawn aenoentcmd","path":"aenoentcmd"}
+            {"code":"ENOENT","errno":"ENOENT","syscall":"spawn"}:(
+                semver.lt(process.version.substr(1),'4.0.0')?
+                {"code":"ENOENT","errno":"ENOENT","syscall":"spawn aenoentcmd","path":"aenoentcmd"}:
+                {"code":"ENOENT","errno":"ENOENT","syscall":"spawn aenoentcmd","path":"aenoentcmd",spawnargs: [ 'parameter1', 'parameter2' ]}
+            )
         )
     },
     'controled-colored':{

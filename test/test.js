@@ -43,9 +43,9 @@ describe('exec-to-html', function(){
                         if(fixture.slice) {
                             obtainedLines = obtainedLines.slice(fixture.slice[0], fixture.slice[1]);
                         }
-                        //console.log("OL", obtainedLines); console.log("EX", fixture.expected);
+                        // console.log("OL", obtainedLines); console.log("EX", fixture.expected);
                         expect(obtainedLines).to.eql(fixture.expected);
-                        //console.log("exitCode",exitCode);
+                        // console.log("exitCode",exitCode,fixture.exit);
                         expect(exitCode).to.eql(fixture.exit||0);
                         done();
                     }).catch(done);

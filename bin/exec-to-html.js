@@ -1,3 +1,4 @@
+
 "use strict";
 /*jshint eqnull:true */
 /*jshint globalstrict:true */
@@ -15,7 +16,6 @@ var os = require('os');
 var fs = require('fs-promise');
 var readYaml = require('read-yaml-promise');
 
-var extensionServe = require('extension-serve');
 var MiniTools = require('mini-tools');
 var serveErr=MiniTools.serveErr;
 
@@ -277,10 +277,11 @@ execToHtml.middleware = function execToHtmlMiddleware(opts){
                 var pathFile;
                 if(params[2]==='resources'){
                     pathFile='/'+params.slice(3).join('/');
+                    // staticServe.serveFile(req,res,pathFile,{root:__dirname});
                 }else{
                     pathFile='exec-control.jade';
+                    miniTools.serveJade(pathFile,false)(req,res);
                 }
-                extensionServe.serveFile(req,res,pathFile,{root:__dirname});
             }else{
                 var projectName;
                 return Promises.start(function(){
