@@ -1,8 +1,9 @@
 {
   "name": "exec-to-html",
   "description": "Execute command sending output through stream to client",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "author": "Codenautas <codenautas@googlegroups.com>",
+  files: ["bin"],
   "license": "MIT",
   "repository": "codenautas/exec-to-html",
   "contributors": [{
@@ -13,7 +14,8 @@
     "lodash": "~4.11.1",
     "read-yaml-promise": "~1.0.2",
 
-    "best-promise": "~0.2.4"
+    "best-promise": "~0.2.4",
+    "mini-tools": "~0.2.8"
   },
   "devDependencies": {
     "body-parser": "~1.15.0",
@@ -29,8 +31,7 @@
     "moment": "~2.13.0",
     "semver": "~5.1.0",
 
-    "ajax-best-promise": "~0.0.7",
-    "mini-tools": "~0.2.8"
+    "ajax-best-promise": "~0.0.7"
   },
   "main": "bin/exec-to-html.js",
   "engines": {
