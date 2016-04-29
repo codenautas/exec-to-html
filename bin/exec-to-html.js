@@ -280,7 +280,7 @@ execToHtml.middleware = function execToHtmlMiddleware(opts){
                     // staticServe.serveFile(req,res,pathFile,{root:__dirname});
                 }else{
                     pathFile='exec-control.jade';
-                    miniTools.serveJade(pathFile,false)(req,res);
+                    MiniTools.serveJade(pathFile,false)(req,res);
                 }
             }else{
                 var projectName;

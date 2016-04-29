@@ -1,7 +1,7 @@
 {
   "name": "exec-to-html",
   "description": "Execute command sending output through stream to client",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "author": "Codenautas <codenautas@googlegroups.com>",
   "files": ["bin"],
   "license": "MIT",
