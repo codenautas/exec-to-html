@@ -1,22 +1,19 @@
-
 "use strict";
 /*jshint eqnull:true */
-/*jshint globalstrict:true */
 /*jshint node:true */
+/*eslint-disable no-console */
 
 var execToHtml = {};
 
 var _ = require('lodash');
-var stream = require('stream');
-var util = require('util');
 var Promises = require('best-promise');
 var spawn = require("child_process").spawn;
 var iconv = require('iconv-lite');
-var os = require('os');
 var fs = require('fs-promise');
 var readYaml = require('read-yaml-promise');
 
 var MiniTools = require('mini-tools');
+var send = require('send');
 var serveErr=MiniTools.serveErr;
 
 var IDX_STDOUT  = 1;// 001
@@ -56,7 +53,7 @@ execToHtml.addLocalCommands = function addLocalCommands(existingCommands) {
             /*jshint forin: true */
         }
         return existingCommands;
-    }).catch(function(err) {
+    }).catch(function(){
         return false;
     });
 };
@@ -277,10 +274,10 @@ execToHtml.middleware = function execToHtmlMiddleware(opts){
                 var pathFile;
                 if(params[2]==='resources'){
                     pathFile='/'+params.slice(3).join('/');
-                    // staticServe.serveFile(req,res,pathFile,{root:__dirname});
+                    send(req, Path.join(__dirname, pathFile), {}).pipe(res);
                 }else{
-                    pathFile='exec-control.jade';
-                    MiniTools.serveJade(pathFile,false)(req,res);
+                    pathFile=__dirname+'/exec-control';
+                    MiniTools.serveJade(pathFile,false)(req,res,next);
                 }
             }else{
                 var projectName;

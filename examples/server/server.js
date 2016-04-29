@@ -10,7 +10,7 @@ var Promises = require('best-promise');
 var fs = require('fs-promise');
 var path = require('path');
 var readYaml = require('read-yaml-promise');
-var extensionServe = require('extension-serve');
+var extensionServe = require('extension-serve-static');
 var jade = require('jade');
 
 console.log('cwd',process.cwd());

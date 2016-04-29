@@ -9,7 +9,7 @@ Execute command sending output through stream to client
 [!--lang:*-->
 
 <!-- cucardas -->
-![designing](https://img.shields.io/badge/stability-desgining-red.svg)
+![extending](https://img.shields.io/badge/stability-extending-orange.svg)
 [![npm-version](https://img.shields.io/npm/v/exec-to-html.svg)](https://npmjs.org/package/exec-to-html)
 [![downloads](https://img.shields.io/npm/dm/exec-to-html.svg)](https://npmjs.org/package/exec-to-html)
 [![linux](https://img.shields.io/travis/codenautas/exec-to-html/master.svg)](https://travis-ci.org/codenautas/exec-to-html)
@@ -17,6 +17,7 @@ Execute command sending output through stream to client
 [![coverage](https://img.shields.io/coveralls/codenautas/exec-to-html/master.svg)](https://coveralls.io/r/codenautas/exec-to-html)
 [![climate](https://img.shields.io/codeclimate/github/codenautas/exec-to-html.svg)](https://codeclimate.com/github/codenautas/exec-to-html)
 [![dependencies](https://img.shields.io/david/codenautas/exec-to-html.svg)](https://david-dm.org/codenautas/exec-to-html)
+[![qa-control](http://codenautas.com/github/codenautas/exec-to-html.svg)](http://codenautas.com/github/codenautas/exec-to-html)
 
 <!--multilang buttons-->
 
