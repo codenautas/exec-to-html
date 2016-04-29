@@ -3,7 +3,7 @@
   "description": "Execute command sending output through stream to client",
   "version": "0.0.9",
   "author": "Codenautas <codenautas@googlegroups.com>",
-  files: ["bin"],
+  "files": ["bin"],
   "license": "MIT",
   "repository": "codenautas/exec-to-html",
   "contributors": [{
