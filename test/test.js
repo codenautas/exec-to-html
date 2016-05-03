@@ -27,19 +27,29 @@ if(process.env.TRAVIS){
 }else{
     dirbase = process.env.TMP || process.env.TEMP || '/tmp';
 }
+var dirtemp = dirbase;
 dirbase+='/temp-exec-to-html';
 
 describe('exec-to-html', function(){
     before(function(done){
         this.timeout(5000);
         var dest = Path.normalize(dirbase+'/pro1/');
+        var destNM = dest+'/node_modules';
+        var bakNM = dirtemp+'/node_modules';
         Promises.start(function(){
+            return fs.exists(destNM);
+        }).then(function(existsNM) {
+            if(existsNM) { /*console.log(destNM, "->", bakNM);*/ return fs.rename(destNM, bakNM); }
+        }).then(function() {
             return fs.remove(dirbase);
         }).then(function(){
             return fs.copy('./test/pro1', dest, {clobber:true});
         }).then(function(){
             return fs.rename(dest+'dot-git', dest+'.git');
         }).then(function(){
+            //console.log(bakNM, "->", destNM);
+            return fs.rename(bakNM, destNM);
+        }).then(function() {
             done();
         }).catch(function(err){
             console.log(err);
