@@ -127,5 +127,14 @@ describe('exec-to-html', function(){
                 });
             }).catch(done);
         });
+        it('should return false if yaml not found',function(done){
+            var originalYaml = execToHtml.localYamlFile;
+            execToHtml.localYamlFile = false;
+            execToHtml.addLocalCommands({c1:'run 1', c2:'run 2'}).then(function(commands) {
+                expect(commands).to.be(false);
+                execToHtml.localYamlFile = originalYaml;
+                done();
+            }).catch(done);
+        });
     });
 });
