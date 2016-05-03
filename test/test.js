@@ -229,9 +229,23 @@ describe('exec-to-html', function(){
             agent
                 .get('/exec-action/controls/resources')
                 .end(function(err, res){
-                    console.log(res.text);
+                    //console.log(res.text);
                     if(err){ return done(err); }
                     expect(res.text).to.eql('Not Found');
+                    done();
+                });
+        });
+        it("coverage for controls (jade)",function(done){
+            server = createServer();
+            this.timeout(smallTO);
+            var agent=request(server);
+            agent
+                .get('/exec-action/controls')
+                .end(function(err, res){
+                    //console.log(res.text);
+                    if(err){ return done(err); }
+                    expect(res.text).to.match(/exec-control.css/);
+                    expect(res.text).to.match(/exec-control.js/);
                     done();
                 });
         });
