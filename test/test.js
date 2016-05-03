@@ -228,10 +228,10 @@ describe('exec-to-html', function(){
             var agent=request(server);
             agent
                 .get('/exec-action/controls/resources')
+                .expect(404)
                 .end(function(err, res){
-                    //console.log(res.text);
+                    //console.log(err); console.log(res);
                     if(err){ return done(err); }
-                    expect(res.text).to.eql('Not Found');
                     done();
                 });
         });
