@@ -1,6 +1,8 @@
 "use strict";
 
 var _ = require('lodash');
+var fs = require('fs-promise');
+var Promises = require('best-promise');
 var stream = require('stream');
 var expect = require('expect.js');
 var execToHtml = require('..');
@@ -12,7 +14,38 @@ var util = require('util');
 var os = require('os');
 var winOS = Path.sep==='\\';
 
+var request = require('supertest');
+
+var dirbase;
+
+if(process.env.TRAVIS){
+    dirbase = process.env.HOME;
+}else if(process.env.APPVEYOR){
+    dirbase = process.env.APPVEYOR_BUILD_FOLDER;
+    console.log('APPVEYOR ============ DIR',dirbase);
+    dirbase = 'C:\\Users\\appveyor\\AppData\\Local\\Temp';
+}else{
+    dirbase = process.env.TMP || process.env.TEMP || '/tmp';
+}
+dirbase+='/temp-exec-to-html';
+
 describe('exec-to-html', function(){
+    before(function(done){
+        this.timeout(5000);
+        var dest = Path.normalize(dirbase+'/pro1/');
+        Promises.start(function(){
+            return fs.remove(dirbase);
+        }).then(function(){
+            return fs.copy('./test/pro1', dest, {clobber:true});
+        }).then(function(){
+            return fs.rename(dest+'dot-git', dest+'.git');
+        }).then(function(){
+            done();
+        }).catch(function(err){
+            console.log(err);
+            done(_.isArray(err)?err[0]:err);
+        });
+    });
     describe('internal streams', function(){
         it('first simple test', function(done){
             var obtainedLines=[];
@@ -127,7 +160,7 @@ describe('exec-to-html', function(){
                 });
             }).catch(done);
         });
-        describe('unexpected input coverage (#15)', function(){
+        describe('unexpected input', function(){
             var originalYaml = execToHtml.localYamlFile;
             var existingCommands = {c1:'run 1', c2:'run 2'};
             afterEach(function(){
@@ -150,4 +183,41 @@ describe('exec-to-html', function(){
         });
         execToHtml.localYamlFile = './test/local-config.yaml';
     });
+    describe('server middleware', function() {
+        var server;
+        it("must run predefined commands",function(done){
+            server = createServer();
+            this.timeout(40000);
+            var agent=request(server);
+            agent
+                .get('/exec-action/install/pro1')
+                .end(function(err, res){
+                    //console.log(res.text);
+                    if(err){ return done(err); }
+                    
+                    var lines = res.text.split('\n');
+                    var txts = [];
+                    for(var lp in lines) {
+                        var line = lines[lp];
+                        if(line !== '') {
+                            var ln = JSON.parse(line);
+                            if(ln.origin.match(/(command|shell)/) && ln.text.match(/^(git |npm)/)) {
+                                txts.push(ln.text);
+                            }
+                        }
+                    }
+                    expect(txts).to.eql(['git pull','npm prune', 'npm install', 'npm test']);
+                    done();
+                });
+        });
+    });
 });
+
+var express = require('express');
+
+function createServer() {
+    var app = express();
+    app.listen();
+    app.use('/exec-action',execToHtml.middleware({baseDir:dirbase+'/'}));
+    return app;
+}

@@ -31,6 +31,7 @@
     "mocha": "~2.4.5",
     "moment": "~2.13.0",
     "semver": "~5.1.0",
+    "supertest": "1.2.0",
 
     "ajax-best-promise": "~0.0.7",
     "extension-serve-static": "0.1.6"
