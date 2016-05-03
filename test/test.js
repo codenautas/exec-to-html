@@ -127,14 +127,27 @@ describe('exec-to-html', function(){
                 });
             }).catch(done);
         });
-        it('should return false if yaml not found',function(done){
+        describe('unexpected input coverage (#15)', function(){
             var originalYaml = execToHtml.localYamlFile;
-            execToHtml.localYamlFile = false;
-            execToHtml.addLocalCommands({c1:'run 1', c2:'run 2'}).then(function(commands) {
-                expect(commands).to.be(false);
+            var existingCommands = {c1:'run 1', c2:'run 2'};
+            afterEach(function(){
                 execToHtml.localYamlFile = originalYaml;
-                done();
-            }).catch(done);
+            });
+            it('should return false if yaml not found',function(done){
+                execToHtml.localYamlFile = false;
+                execToHtml.addLocalCommands(existingCommands).then(function(commands) {
+                    expect(commands).to.be(false);
+                    done();
+                }).catch(done);
+            });
+            it('should preserve existing commands',function(done){
+                execToHtml.localYamlFile = './test/local-config-dummy.yaml';
+                execToHtml.addLocalCommands(existingCommands).then(function(commands) {
+                    expect(commands).to.eql(existingCommands);
+                    done();
+                }).catch(done);
+            });
         });
+        execToHtml.localYamlFile = './test/local-config.yaml';
     });
 });
