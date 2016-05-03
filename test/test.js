@@ -228,7 +228,7 @@ describe('exec-to-html', function(){
             var agent=request(server);
             agent
                 .get('/exec-action/controls/resources')
-                .expect(404)
+                .expect(process.env.APPVEYOR ? 301 : 404)
                 .end(function(err, res){
                     //console.log(err); console.log(res);
                     if(err){ return done(err); }
