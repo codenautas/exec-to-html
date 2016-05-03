@@ -196,9 +196,10 @@ describe('exec-to-html', function(){
     });
     describe('server middleware', function() {
         var server;
+        var bigTO = 40000, smallTO=5000;
         it("must run predefined commands",function(done){
             server = createServer();
-            this.timeout(40000);
+            this.timeout(bigTO);
             var agent=request(server);
             agent
                 .get('/exec-action/install/pro1')
@@ -218,6 +219,19 @@ describe('exec-to-html', function(){
                         }
                     }
                     expect(txts).to.eql(['git pull','npm prune', 'npm install', 'npm test']);
+                    done();
+                });
+        });
+        it("coverage for controls/resources",function(done){
+            server = createServer();
+            this.timeout(smallTO);
+            var agent=request(server);
+            agent
+                .get('/exec-action/controls/resources')
+                .end(function(err, res){
+                    console.log(res.text);
+                    if(err){ return done(err); }
+                    expect(res.text).to.eql('Not Found');
                     done();
                 });
         });
