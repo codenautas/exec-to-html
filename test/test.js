@@ -227,7 +227,7 @@ describe('exec-to-html', function(){
             var agent=request(server);
             agent
                 .get('/exec-action/controls/resources')
-                .expect(process.env.APPVEYOR ? 301 : 404)
+                .expect(winOS ? 301 : 404)
                 .end(function(err, res){
                     //console.log(err); console.log(res);
                     if(err){ return done(err); }
@@ -248,7 +248,7 @@ describe('exec-to-html', function(){
                     done();
                 });
         });
-        it.skip("coverage for errors",function(done){
+        it("coverage for errors",function(done){
             server = createServer();
             this.timeout(bigTO);
             var agent=request(server);
