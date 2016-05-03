@@ -249,6 +249,20 @@ describe('exec-to-html', function(){
                     done();
                 });
         });
+        it("coverage for errors",function(done){
+            server = createServer();
+            this.timeout(smallTO);
+            var agent=request(server);
+            agent
+                .get('/exec-action/install')
+                .expect(400)
+                .end(function(err, res){
+                    if(err){ return done(err); }
+                    //console.log("TEXT", res.text);
+                    expect(res.text).to.match(/Error: execToHtml.middleware expect \/action\/name/);
+                    done();
+                });
+        });
     });
 });
 
