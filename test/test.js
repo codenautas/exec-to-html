@@ -10,6 +10,7 @@ var Path = require('path');
 var fixtures = require('./fixtures.js');
 
 var stream = require('stream');
+var sinon = require('sinon');
 var util = require('util');
 var os = require('os');
 var winOS = Path.sep==='\\';
@@ -250,6 +251,7 @@ describe('exec-to-html', function(){
         });
         it("coverage for errors",function(done){
             server = createServer();
+            sinon.stub(console, "log");
             this.timeout(bigTO);
             var agent=request(server);
             agent
@@ -259,6 +261,7 @@ describe('exec-to-html', function(){
                     if(err){ return done(err); }
                     //console.log("TEXT", res.text);
                     expect(res.text).to.match(/Error: execToHtml.middleware expect \/action\/name/);
+                    console.log.restore();
                     done();
                 });
         });
