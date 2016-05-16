@@ -287,10 +287,10 @@ if(/fixtures\.js$/.test(process.argv[1])){
         fixture=fixture.subCommands[process.argv[3]];
     }
     var messages=fixture.messages||fixture.expected;
-    if('delay' in fixture){
+    if('delay' in fixture || process.env.APPVEYOR){
         var message;
         var parts=[];
-        var splitter=fixture.splitter||'';
+        var splitter=fixture.splitter||'no-split';
         var sendByPart=function sendByPart(){
             if(!parts.length){
                 if(!messages.length){
@@ -298,12 +298,12 @@ if(/fixtures\.js$/.test(process.argv[1])){
                 }else{
                     message=messages.shift();
                 }
-                parts='splitter' in fixture?message.text.split(splitter):[message];
+                parts=message.text.split(splitter);
             }else{
                 var part=parts.shift();
                 process[message.origin].write(part+(parts.length?splitter:''));
             }
-            setTimeout(sendByPart,fixture.delay);
+            setTimeout(sendByPart,fixture.delay || 20);
         };
         sendByPart();
     }else{
