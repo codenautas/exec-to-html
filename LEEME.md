@@ -9,7 +9,7 @@ Execute command sending output through stream to client
 [!--lang:*-->
 
 <!-- cucardas -->
-![extending](https://img.shields.io/badge/stability-extending-orange.svg)
+![stable](https://img.shields.io/badge/stability-stable-brightgreen.svg)
 [![npm-version](https://img.shields.io/npm/v/exec-to-html.svg)](https://npmjs.org/package/exec-to-html)
 [![downloads](https://img.shields.io/npm/dm/exec-to-html.svg)](https://npmjs.org/package/exec-to-html)
 [![linux](https://img.shields.io/travis/codenautas/exec-to-html/master.svg)](https://travis-ci.org/codenautas/exec-to-html)

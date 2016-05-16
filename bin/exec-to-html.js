@@ -28,8 +28,8 @@ function specialReject(message){
     var p=Promises.reject(new Error(message));
     return {
         onLine:function(){ return p; },
-        then:function(){ return p; },
-        'catch':function(x){ return p.catch(x); }
+        then:function(f, fErr){ return p.then(f, fErr); },
+        'catch':function(fErr){ return p.catch(fErr); }
     };
 }
 
@@ -249,7 +249,7 @@ execToHtml.actions = {
         prepare:function(opts,projectName){
             var dir=opts.baseDir+projectName;
             return fs.stat(dir).then(function(stat){
-                if(!stat.isDirectory){
+                if(!stat.isDirectory()){
                     throw new Error('invalid project name. Not a Directory');
                 }
                 return {runArgs:[[

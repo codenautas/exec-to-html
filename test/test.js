@@ -109,12 +109,37 @@ describe('exec-to-html', function(){
         });
     });
     describe('internal streams error control', function(){
-        it('must pass opts',function(done){
+        it('must pass opts, detecting with onLine',function(done){
             execToHtml.run('!echo 1').onLine(function(){
                 throw new Error('Unexpected data');
             }).then(function(){
                 throw new Error('Reject expected');
             }).catch(function(err){
+                expect(err).to.be.a(Error);
+                expect(err.message).to.match(/option echo is mandatory/);
+                done();
+            }).catch(done);
+        });
+        it('must pass opts, detecting without onLine',function(done){
+            execToHtml.run('!echo 2').then(function(){
+                throw new Error('Reject expected');
+            }).catch(function(err){
+                expect(err).to.be.a(Error);
+                expect(err.message).to.match(/option echo is mandatory/);
+                done();
+            }).catch(done);
+        });
+        it('must pass opts, detecting directly',function(done){
+            execToHtml.run('!echo 3').catch(function(err){
+                expect(err).to.be.a(Error);
+                expect(err.message).to.match(/option echo is mandatory/);
+                done();
+            }).catch(done);
+        });
+        it('must pass opts, detecting in then',function(done){
+            execToHtml.run('!echo 4').then(function(){
+                throw new Error('Reject expected');
+            }, function(err){
                 expect(err).to.be.a(Error);
                 expect(err.message).to.match(/option echo is mandatory/);
                 done();
@@ -221,6 +246,20 @@ describe('exec-to-html', function(){
                     expect(txts).to.eql(['git pull','npm prune', 'npm install', 'npm test']);
                     done();
                 });
+        });
+        it("must control dir in install",function(done){
+            server = createServer();
+            this.timeout(bigTO);
+            fs.writeFile(dirbase+'/local-dummy','this is not a dir').then(function(){
+                var agent=request(server);
+                agent
+                .get('/exec-action/install/local-dummy')
+                .end(function(err, res){
+                    if(err){ return done(err); }
+                    expect(res.text).to.match(/error.*Not a Directory/i);
+                    done();
+                });
+            });
         });
         it("coverage for controls/resources",function(done){
             server = createServer();
