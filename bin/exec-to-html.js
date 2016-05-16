@@ -204,10 +204,9 @@ execToHtml.run = function run(commandLines, opts){
                                     executer.origin = streamName;
                                 }
                                 executer.buffer += rData;
-                                if(executer.buffer.match(/\r[^\n]|\n/)) {
-                                    var buffers = executer.buffer.split(/(\r\n|\r(?!\n)|\n)/);
-                                    var i=0;
-                                    for( ; i<buffers.length-1; i+=2) {
+                                if(executer.buffer.match(/(\r\n|\r(?!\n|$)|\n)/)) {
+                                    var buffers = executer.buffer.split(/(\r\n|\r(?!\n|$)|\n)/);
+                                    for(var i=0; i<buffers.length-1; i+=2) {
                                         flush({origin:streamName,  text:buffers[i]+buffers[i+1]});
                                     }
                                     executer.buffer = buffers[i];
