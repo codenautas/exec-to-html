@@ -11,9 +11,9 @@
   }],
   "dependencies": {
     "iconv-lite": "~0.4.13",
-    "lodash": "~4.12.0",
+    "lodash": "~4.13.1",
     "read-yaml-promise": "~1.0.2",
-    "send": "~0.13.2",
+    "send": "~0.14.1",
 
     "best-promise": "~0.2.4",
     "mini-tools": "~0.2.9"
