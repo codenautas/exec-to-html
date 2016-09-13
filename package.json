@@ -11,12 +11,12 @@
   }],
   "dependencies": {
     "iconv-lite": "~0.4.13",
-    "lodash": "~4.13.1",
+    "lodash": "~4.15.0",
     "read-yaml-promise": "~1.0.2",
     "send": "~0.14.1",
 
     "best-promise": "~0.2.4",
-    "mini-tools": "~0.2.9"
+    "mini-tools": "~0.3.2"
   },
   "devDependencies": {
     "body-parser": "~1.15.1",

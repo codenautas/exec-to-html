@@ -299,7 +299,7 @@ describe('exec-to-html', function(){
                 .end(function(err, res){
                     if(err){ return done(err); }
                     //console.log("TEXT", res.text);
-                    expect(res.text).to.match(/Error: execToHtml.middleware expect \/action\/name/);
+                    expect(res.text).to.match(/ERROR: execToHtml.middleware expect \/action\/name/);
                     console.log.restore();
                     done();
                 });
