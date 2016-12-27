@@ -2,7 +2,6 @@
 
 var _ = require('lodash');
 var fs = require('fs-promise');
-var Promises = require('best-promise');
 var stream = require('stream');
 var expect = require('expect.js');
 var execToHtml = require('..');
@@ -38,7 +37,7 @@ describe('exec-to-html', function(){
         var destNM = dest+'/node_modules';
         var bakNM = dirtemp+'/node_modules';
         var existsNM=false;
-        Promises.start(function(){
+        Promise.resolve().then(function(){
             return fs.exists(destNM);
         }).then(function(exists) {
             existsNM = exists;
