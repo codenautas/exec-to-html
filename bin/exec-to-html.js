@@ -1,7 +1,4 @@
 "use strict";
-/*jshint eqnull:true */
-/*jshint node:true */
-/*eslint-disable no-console */
 
 var execToHtml = {};
 
@@ -46,10 +43,12 @@ execToHtml.addLocalCommands = function addLocalCommands(existingCommands) {
         var cmds=yamlconf.commands;
         if(cmds) {
             /*jshint forin: false */
+            /*eslint-disable guard-for-in */
             for(var cmd in cmds) {
                 existingCommands[cmd] = cmds[cmd];
             }
             /*jshint forin: true */
+            /*eslint-enable guard-for-in */
         }
         return existingCommands;
     }).catch(function(){
@@ -165,7 +164,7 @@ execToHtml.run = function run(commandLines, opts){
                             flush({origin: executer.origin, text:executer.buffer});
                         }
                         if(opts[eventNameForEnd]){
-                            if(resultForEnd==null){
+                            if(resultForEnd===null){
                                 resultForEnd='empty result';
                             }
                             flush({origin:eventNameForEnd, text:resultForEnd.toString()});
@@ -196,7 +195,7 @@ execToHtml.run = function run(commandLines, opts){
                                     executer.buffer = '';
                                     executer.origin = streamName;
                                 }
-                                if(streamName != executer.origin && executer.buffer.length) {
+                                if(streamName !== executer.origin && executer.buffer.length) {
                                     var buffer = executer.buffer;
                                     executer.buffer = '';
                                     flush({origin:executer.origin, text:buffer});
@@ -274,13 +273,13 @@ execToHtml.middleware = function execToHtmlMiddleware(opts){
                     pathFile='/'+params.slice(3).join('/');
                     send(req, Path.join(__dirname, pathFile), {}).pipe(res);
                 }else{
-                    pathFile=__dirname+'/exec-control';
+                    pathFile=Path.resolve(__dirname,'exec-control');
                     MiniTools.serveJade(pathFile,false)(req,res,next);
                 }
             }else{
                 var projectName;
                 return Promise.resolve().then(function(){
-                    if(params.length!=3){
+                    if(params.length!==3){
                         throw new Error('execToHtml.middleware expect /action/name');
                     }
                     projectName=params[2];

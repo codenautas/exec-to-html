@@ -46,23 +46,8 @@
     "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot --check-leaks test/",
     "start": "node examples/server/server.js"
   },
-  "jshintConfig": {
-    "asi": false,
-    "curly": true,
-    "forin": true
-  },
-  "eslintConfig": {
-    "env": {
-      "node": false
-    },
-    "rules": {
-      "strict": 0,
-      "no-console": 1,
-      "no-unused-vars": 1
-    }
-  }, 
   "qa-control": {
-    "package-version": "0.2.0",
+    "package-version": "0.3.0",
     "run-in": "server",
     "test-appveyor": true,
     "type": "lib",
