@@ -6,7 +6,6 @@
 var execToHtml = {};
 
 var _ = require('lodash');
-var Promises = require('best-promise');
 var spawn = require("child_process").spawn;
 var iconv = require('iconv-lite');
 var fs = require('fs-promise');
@@ -25,7 +24,7 @@ var Path = require('path');
 var winOS = Path.sep==='\\';
 
 function specialReject(message){
-    var p=Promises.reject(new Error(message));
+    var p=Promise.reject(new Error(message));
     return {
         onLine:function(){ return p; },
         then:function(f, fErr){ return p.then(f, fErr); },
@@ -41,7 +40,7 @@ execToHtml.commands={
 
 execToHtml.localYamlFile = './local-config.yaml';
 execToHtml.addLocalCommands = function addLocalCommands(existingCommands) {
-    return Promises.start(function() {
+    return Promise.resolve().then(function() {
         return readYaml(execToHtml.localYamlFile);
     }).then(function(yamlconf){
         var cmds=yamlconf.commands;
@@ -73,7 +72,7 @@ execToHtml.run = function run(commandLines, opts){
     }
     var runner={
         onLine:function(flush){
-            return Promises.start(function() {
+            return Promise.resolve().then(function() {
                 if(! execToHtml.extraCommandsLoaded) {
                     execToHtml.extraCommandsLoaded = true;
                     return execToHtml.addLocalCommands(execToHtml.commands);
@@ -223,7 +222,7 @@ execToHtml.run = function run(commandLines, opts){
                         });
                     });
                 };
-            return new Promises.Promise(streamer);
+            return new Promise(streamer);
             });
         }
     };
@@ -266,7 +265,7 @@ execToHtml.actions = {
 execToHtml.middleware = function execToHtmlMiddleware(opts){
     return function(req,res,next){
         var actionName;
-        Promises.start(function(){
+        Promise.resolve().then(function(){
             var params=req.path.split('/');
             actionName=params[1];
             if(actionName==='controls'){
@@ -280,7 +279,7 @@ execToHtml.middleware = function execToHtmlMiddleware(opts){
                 }
             }else{
                 var projectName;
-                return Promises.start(function(){
+                return Promise.resolve().then(function(){
                     if(params.length!=3){
                         throw new Error('execToHtml.middleware expect /action/name');
                     }
