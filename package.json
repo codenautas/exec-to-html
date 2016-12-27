@@ -1,7 +1,7 @@
 {
   "name": "exec-to-html",
   "description": "Execute command sending output through stream to client",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": "Codenautas <codenautas@googlegroups.com>",
   "files": ["bin"],
   "license": "MIT",
@@ -10,13 +10,13 @@
     "name": "Emilio Platzer", "email": "emilioplatzer@gmail.com"
   }],
   "dependencies": {
-    "iconv-lite": "~0.4.13",
-    "lodash": "~4.15.0",
+    "iconv-lite": "~0.4.15",
+    "lodash": "~4.17.3",
     "read-yaml-promise": "~1.0.2",
     "send": "~0.14.1",
 
     "best-promise": "~0.2.4",
-    "mini-tools": "~0.3.2"
+    "mini-tools": "~0.3.9"
   },
   "devDependencies": {
     "body-parser": "~1.15.1",
