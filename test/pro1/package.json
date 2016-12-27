@@ -17,8 +17,7 @@
     "mocha": "2.3.2",
     "expect.js": "0.3.1",
     
-    "expect-called": "0.4.0",
-    "best-promise": "0.2.4"
+    "expect-called": "0.4.0"
   },
   "main": "mynoderepo.js",
   "engines": {

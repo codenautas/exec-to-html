@@ -15,7 +15,6 @@
     "read-yaml-promise": "~1.0.2",
     "send": "~0.14.1",
 
-    "best-promise": "~0.2.4",
     "mini-tools": "~0.3.9"
   },
   "devDependencies": {
