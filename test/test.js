@@ -1,6 +1,7 @@
 "use strict";
 
-var _ = require('lodash');
+var likeAr = require('like-ar');
+
 var fs = require('fs-promise');
 var stream = require('stream');
 var expect = require('expect.js');
@@ -13,6 +14,8 @@ var sinon = require('sinon');
 var util = require('util');
 var os = require('os');
 var winOS = Path.sep==='\\';
+
+var bestGlobals = require('best-globals');
 
 var request = require('supertest');
 
@@ -54,7 +57,7 @@ describe('exec-to-html', function(){
             done();
         }).catch(function(err){
             console.log(err);
-            done(_.isArray(err)?err[0]:err);
+            done(err instanceof Array?err[0]:err);
         });
     });
     describe('internal streams', function(){
@@ -68,7 +71,7 @@ describe('exec-to-html', function(){
                 done();
             }).catch(done);
         });
-        _.forEach(fixtures,function(fixture){
+        likeAr(fixtures).forEach(function(fixture){
             if(fixture.skipped){
                 it.skip('run fixture with stream. For fixutreName='+fixture.name+', skipped:'+fixture.skipped,function(){
                 });
@@ -97,7 +100,7 @@ describe('exec-to-html', function(){
             }
             if(fixture.collect){
                 it('run fixture with collect. For fixutreName='+fixture.name,function(done){
-                    var opts=_.clone(fixture.opts||{});
+                    var opts = bestGlobals.deepCopy(fixture.opts||{});
                     opts.collect=true;
                     execToHtml.run(fixture.commands,opts).then(function(result){
                         expect(result).to.eql(fixture.collect);
@@ -150,7 +153,7 @@ describe('exec-to-html', function(){
         execToHtml.localYamlFile = './test/local-config.yaml';
         var expCmds;
         beforeEach(function(){
-            expCmds =  _.cloneDeep(execToHtml.commands);
+            expCmds = bestGlobals.deepCopy(execToHtml.commands);
             expCmds['diskspace'] = {
                win: 'dir|find "dirs"', unix: 'df -h --total | grep total', shell: true
             };

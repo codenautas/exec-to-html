@@ -99,7 +99,7 @@ rules:
   yoda: 0
 
   # Strict
-  strict: "error"
+  strict: 2
 
   # Variables
   init-declarations: 0

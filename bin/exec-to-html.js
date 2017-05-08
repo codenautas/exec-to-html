@@ -2,7 +2,7 @@
 
 var execToHtml = {};
 
-var _ = require('lodash');
+var likeAr = require('like-ar');
 var spawn = require("child_process").spawn;
 var iconv = require('iconv-lite');
 var fs = require('fs-promise');
@@ -127,7 +127,7 @@ execToHtml.run = function run(commandLines, opts){
                             commandInfo.command='cmd.exe';
                         } else {
                             // Ponemos comillas si hay espacios en el nombre
-                            commandInfo.params = _.map(commandInfo.params, function(e) {
+                            commandInfo.params = likeAr(commandInfo.params).map(function(e) {
                                 return (e.match(/ /)) ? '"' + e + '"' : e;
                             });
                             commandInfo.params = [commandInfo.command+' '+ commandInfo.params.join(' ')];
@@ -176,7 +176,7 @@ execToHtml.run = function run(commandLines, opts){
                         }
                     };
                     var executer=spawn(commandInfo.command, commandInfo.params, spawnOpts);
-                    _.forEach({stdout:1, stderr:2},function(streamIndex, streamName){
+                    likeAr({stdout:1, stderr:2}).forEach(function(streamIndex, streamName){
                         executer.stdio[streamIndex].on('data', function(data){
                             /* NO BORRAR, QUIZÁS LO NECESITEMOS PARA DEDUCIR encoding
                             if(opts.encoding && false){
@@ -215,7 +215,7 @@ execToHtml.run = function run(commandLines, opts){
                             finalizer(streamIndex);
                         });
                     });
-                    _.forEach(endFunctions,function(infoEvent, eventName){
+                    likeAr(endFunctions).forEach(function(infoEvent, eventName){
                         executer.on(eventName, function(result){
                             finalizer(infoEvent.flags,result,eventName);
                         });

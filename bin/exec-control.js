@@ -17,15 +17,15 @@ function startAction(){
         data:{}
     }).onJson(function(line){
         eid('status').textContent='executing '+(++lineCount);
-        if(!currentDiv || currentDiv.className!=line.origin){
+        if(!currentDiv || currentDiv.className!==line.origin){
             currentDiv=document.createElement('pre');
             eid('result').appendChild(currentDiv);
         }
         currentDiv.className=line.origin;
-        if(!(line.origin=='exit' && line.text=='0')){
+        if(!(line.origin==='exit' && line.text==='0')){
             currentDiv.textContent+=line.text.replace(/(\r\n?|\r?\n)$/,'');
         }
-        if(line.text.match(/(\r\n?|\r?\n)$/) || line.origin.substr(0,3)!='std'){
+        if(line.text.match(/(\r\n?|\r?\n)$/) || line.origin.substr(0,3)!=='std'){
             currentDiv=null;
         }
     }).then(function(){

@@ -1,6 +1,5 @@
 "use strict";
 
-var _ = require('lodash');
 var os = require('os');
 var path = require('path');
 var winOS = path.sep==='\\';
