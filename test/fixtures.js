@@ -257,7 +257,7 @@ var fixtures={
             {origin:'shell', text:'npm prefix'},
             {origin:'stdout', text:process.cwd()+'\n'}
         ],
-        timeout:5000
+        timeout:120000
     },
     'npm-prune':{
         commands:[{
@@ -270,7 +270,7 @@ var fixtures={
             {origin:'stderr', text:'npm info it worked if it ends with ok\n'}
         ],
         slice:[0,2],
-        timeout:5000/*,
+        timeout:125000/*,
         skipped:"#11"*/
     }
 };

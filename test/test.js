@@ -227,7 +227,7 @@ describe('exec-to-html', function(){
         var bigTO = 40000;
         it("must run predefined commands",function(done){
             server = createServer();
-            this.timeout(bigTO);
+            this.timeout(bigTO*2);
             var agent=request(server);
             agent
                 .get('/exec-action/install/pro1')
