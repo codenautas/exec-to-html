@@ -1,7 +1,7 @@
 {
   "name": "exec-to-html",
   "description": "Execute command sending output through stream to client",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "author": "Codenautas <codenautas@googlegroups.com>",
   "files": [
     "bin"
@@ -19,7 +19,7 @@
     "read-yaml-promise": "~1.0.2",
     "send": "~0.17.1",
     "like-ar": "~0.2.10",
-    "mini-tools": "~1.0.8"
+    "mini-tools": "~1.0.9"
   },
   "devDependencies": {
     "best-globals": "~0.10.19",
