@@ -9,7 +9,7 @@ var session = require('express-session');
 var fs = require('fs-promise');
 var path = require('path');
 var readYaml = require('read-yaml-promise');
-var extensionServe = require('extension-serve-static');
+var serveContent = require('serve-content');
 var jade = require('jade');
 
 console.log('cwd',process.cwd());
@@ -67,7 +67,7 @@ function serveErr(req,res,next){
     }
 }
 
-var mime = extensionServe.mime;
+var mime = serveContent.mime;
 
 var validExts=[
     'html',
@@ -81,7 +81,7 @@ app.use('/ajax-best-promise.js',function(req,res){
     res.sendFile(process.cwd()+'/node_modules/ajax-best-promise/bin/ajax-best-promise.js');
 });
 
-app.use('/',extensionServe('./examples/client', {
+app.use('/',serveContent('./examples/client', {
     index: ['index.html'], 
     extensions:[''], 
     staticExtensions:validExts

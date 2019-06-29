@@ -1,2 +1,2 @@
-# mynoderepo
-my node repo description
+# testrepo
+Repo for test. Do not modify!

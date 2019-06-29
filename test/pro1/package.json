@@ -1,10 +1,10 @@
 {
-  "name": "mynoderepo",
+  "name": "testrepo",
   "description": "my node repo description",
   "version": "1.0.0",
   "author": "Diego Florio <diegoefe@gmail.com>",
   "license": "MIT",
-  "repository": "diegefe/mynoderepo",
+  "repository": "codenautas/testrepo",
   "contributors": [{
     "name": "Diego Florio", "email": "diegoefe@gmail.com"
   }],
