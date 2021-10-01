@@ -5,6 +5,7 @@ var path = require('path');
 var winOS = path.sep==='\\';
 var semver = require('semver');
 var colors = require('colors');
+var {changing} = require('best-globals')
 colors.enabled = true;
 
 var fixtures={
@@ -19,8 +20,11 @@ var fixtures={
             semver.lt(process.version.substr(1),'0.11.0')?
             {"code":"ENOENT","errno":"ENOENT","syscall":"spawn"}:(
                 semver.lt(process.version.substr(1),'4.0.0')?
-                {"code":"ENOENT","errno":"ENOENT","syscall":"spawn aenoentcmd","path":"aenoentcmd"}:
-                {"code":"ENOENT","errno":"ENOENT","syscall":"spawn aenoentcmd","path":"aenoentcmd",spawnargs: [ 'parameter1', 'parameter2' ]}
+                {"code":"ENOENT","errno":"ENOENT","syscall":"spawn aenoentcmd","path":"aenoentcmd"}:(
+                    semver.lt(process.version.substr(1),'12.0.0')?
+                    {"code":"ENOENT","errno":"ENOENT","syscall":"spawn aenoentcmd","path":"aenoentcmd",spawnargs: [ 'parameter1', 'parameter2' ]}:
+                    changing(new Error("Error: spawn aenoentcmd ENOENT"),{"errno":-4058,"code":"ENOENT","syscall":"spawn aenoentcmd","path":"aenoentcmd","spawnargs":["parameter1","parameter2"]})
+                )
             )
         )
     },
